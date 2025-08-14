@@ -1,0 +1,103 @@
+{% extends "base-page.html" %}
+
+{% block header %}
+
+	<style>		
+	</style>
+		
+	<script type="text/javascript">
+		
+		var latest_timestamp = {};
+		var last_data = [];
+		
+		axis_labels = [];
+		show_as_float = [];
+		
+		% for ti in range(page_config[cur_page_id]['tables']|length) 
+			axis_labels.push("{{axis_labels.get(page_config[cur_page_id]['tables'][ti]['subfolder_label'], "")}}");
+			show_as_float.push({{page_config[cur_page_id]['tables'][ti].get('float', True) | lower}});
+		% endfor
+		
+		
+		function new_data_received(data, table_index)
+		{
+			console.log("New data received, table " + table_index)
+
+			var updated = false;
+			
+			// Update the table
+			str_table = "<table border=\"1\">";
+			str_table += "<tr><th>Name</th><th>" + axis_labels[table_index] + "</th></tr>";
+			for (tname in data)
+			{
+				val =  data[tname][1]
+				ts =  data[tname][0]
+				
+				animate_str = '';
+				if ((last_data[table_index]) && (last_data[table_index][tname]) && (last_data[table_index][tname][0] != ts))
+				{
+					//console.log(tname + " has changed from " + last_data[table_index][tname][1] + " to " + val);
+					animate_str = 'class="newvalue"';
+				}
+				
+				
+				if (show_as_float[table_index])
+				{
+					if ((Math.abs(val) > 1000) || (Math.abs(val) < 0.01))
+						val = val.toExponential(3);
+					else
+						val = val.toFixed(3);
+				}
+				else
+				{
+					val = val.toString();
+				}
+				
+				str_table += "<tr>";
+				str_table += "<td>" + tname + "</td>";
+				str_table += "<td  " + animate_str + ">" + val + "</td>";
+				str_table += "</tr>";
+			}
+			str_table += "</table>";
+			$('#datatable' + table_index).html(str_table);
+			
+			last_data[table_index] = data;
+		}
+		
+		function update_data() 
+		{
+			console.log("Requesting new data");
+			% for ti in range(page_config[cur_page_id]['tables']|length)
+				% set t = page_config[cur_page_id]['tables'][ti]
+				$.getJSON("{{ url_for('pyhkpage.get_data_current', subfolder_label=(t['subfolder_label']|e), value_names=t['names']) }}", function (data){new_data_received(data, {{ti}})});
+			% endfor
+		}	
+
+		$( document ).ready(function() 
+		{
+			update_data();
+			var update_timer = setInterval(update_data, 5000);
+		});
+	
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="clearfix" style="">
+		
+		% for ti in range(page_config[cur_page_id]['tables']|length)
+			% set t = page_config[cur_page_id]['tables'][ti]
+
+			<div class="column" style="">
+				<h4 style="text-align:center; margin-bottom:5px">{{t['title']}}</h4>
+				<div class="prettytable" id="datatable{{ti}}"></div>
+			</div>	
+		
+		% endfor
+		
+	</div>
+
+	
+
+{% endblock %}

@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "enabled": true,
+        "name": "4He Pump",
+        "channel": 0,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "enabled": true,
+        "name": "3He Pump",
+        "channel": 1,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": true,
+        "name": "4He HS",
+        "channel": 2,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": true,
+        "name": "3He HS",
+        "channel": 3,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "4He Cond",
+        "channel": 4,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "enabled": true,
+        "name": "3He Cond",
+        "channel": 5,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "enabled": true,
+        "name": "IC",
+        "channel": 6,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": true,
+        "name": "UC",
+        "channel": 7,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "2K plate side",
+        "channel": 8,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "IC plate center Nb",
+        "channel": 9,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 11,
+        "enabled": true,
+        "name": "IC plate side Cu",
+        "channel": 10,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 6,
+        "enabled": true,
+        "name": "IC strap top",
+        "channel": 11,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 9,
+        "enabled": true,
+        "name": "Nb flared cup",
+        "channel": 12,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "UC plate centUnder",
+        "channel": 13,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "UC plate sideUnder",
+        "channel": 14,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "UC strap dirty",
+        "channel": 15,
+        "mode": 0
+    }
+]

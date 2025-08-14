@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "enabled": true,
+        "name": "UC Fridge",
+        "channel": 0,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "enabled": true,
+        "name": "IC Fridge",
+        "channel": 1,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": false,
+        "name": "Magnet Cernox",
+        "channel": 2,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": true,
+        "name": "UC Stage",
+        "channel": 3,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 11,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "NC 370:4",
+        "channel": 4,
+        "mode": 1
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 11,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "NC 370:5",
+        "channel": 5,
+        "mode": 1
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 11,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": true,
+        "name": "NC 370:6",
+        "channel": 6,
+        "mode": 1
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "enabled": false,
+        "name": "NC 370:7",
+        "channel": 7,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:8",
+        "channel": 8,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:9",
+        "channel": 9,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 11,
+        "enabled": false,
+        "name": "NC 370:10",
+        "channel": 10,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:11",
+        "channel": 11,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 9,
+        "enabled": false,
+        "name": "NC 370:12",
+        "channel": 12,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:13",
+        "channel": 13,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:14",
+        "channel": 14,
+        "mode": 0
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "enabled": false,
+        "name": "NC 370:15",
+        "channel": 15,
+        "mode": 0
+    }
+]

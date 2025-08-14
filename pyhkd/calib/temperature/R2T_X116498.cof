@@ -1,0 +1,42 @@
+Number of fit ranges:                  3
+FIT RANGE:                             1
+Fit type for range1:                   LOG
+Order of fit range1:                   5
+Zlower for fit range1:                 2.91358347602876
+Zupper for fit range1:                 3.92900715289785
+Lower Resist. limit for fit range1:    1010.0035
+Upper Resist. limit for fit range1:    7228.4586
+C(0) Equation 1:                       4.34038611501753E+01
+C(1) Equation 1:                      -3.02697264710893E+01
+C(2) Equation 1:                       5.56668180446658E+00
+C(3) Equation 1:                      -6.65492862048310E-01
+C(4) Equation 1:                       6.25892207200457E-02
+C(5) Equation 1:                      -3.11162300161024E-03
+FIT RANGE:                             2
+Fit type for range2:                   LOG
+Order of fit range2:                   6
+Zlower for fit range2:                 2.16510064016397
+Zupper for fit range2:                 3.10901763494628
+Lower Resist. limit for fit range2:    167.2675
+Upper Resist. limit for fit range2:    1010.0035
+C(0) Equation 2:                       1.34725784591151E+02
+C(1) Equation 2:                      -8.80942750452776E+01
+C(2) Equation 2:                       1.50121649232652E+01
+C(3) Equation 2:                      -1.84591772097337E+00
+C(4) Equation 2:                       2.43416962017860E-01
+C(5) Equation 2:                      -4.46032646287848E-02
+C(6) Equation 2:                       6.92852011709361E-03
+FIT RANGE:                             3
+Fit type for range3:                   LOG
+Order of fit range3:                   6
+Zlower for fit range3:                 1.80734364061925
+Zupper for fit range3:                 2.28778415339975
+Lower Resist. limit for fit range3:    65.0287
+Upper Resist. limit for fit range3:    167.2675
+C(0) Equation 3:                       2.99365016667913E+02
+C(1) Equation 3:                      -1.10699214905392E+02
+C(2) Equation 3:                       1.25556134196899E+01
+C(3) Equation 3:                      -1.40410157196376E+00
+C(4) Equation 3:                       1.68665589698163E-01
+C(5) Equation 3:                      -1.68330746901240E-02
+C(6) Equation 3:                      -3.54234677437097E-03

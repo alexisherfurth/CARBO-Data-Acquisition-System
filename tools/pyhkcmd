@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import datetime
+import pprint
+import time
+
+# Path to the common code library
+COMMON_CODE_DIR = os.path.abspath(os.path.join(__file__,'..','..','common'))
+sys.path.append(COMMON_CODE_DIR)
+
+from pyhkdremote.control import pyhkd_set
+from pyhkdremote.data_loader import pyhkd_get_names, pyhkd_get_latest
+from pyhkdremote.settings import DATA_LOG_FOLDER
+
+# Default to printing help
+cmd = 'help'
+if len(sys.argv) > 1:
+	cmd = str(sys.argv[1])
+	
+def getarg(argpos):
+	if len(sys.argv) > argpos:
+		return str(sys.argv[argpos])
+	else:
+		return None
+
+today = datetime.datetime.today()
+
+########################################################################
+if cmd in ['help','--help','-help','-h']:
+	
+	print('''Usage:
+	
+pyhkcmd help
+  Print this help message
+
+pyhkcmd names <datatype>
+EX: pyhkcmd names temperature
+  Print the sensors names found for today for the given data type
+  (such as "temperature", "voltage", etc.)
+  
+pyhkcmd get <datatype>
+EX: pyhkcmd get voltage
+  Print the latest value for all sensors found for today for the 
+  given data type (such as "temperature", "voltage", etc.)
+	
+pyhkcmd get <datatype> <sensorname>
+EX: pyhkcmd get temperature "4K Head"
+  Print the latest value (from today or yesterday) for the provided
+  sensor name (such as "4K Head") of the given data type (such as
+  "temperature").  Be sure to use quotes around names with spaces.
+  The string "None" is returned if a value is not found.
+	
+pyhkcmd set <targettype> <targetname> <value>
+EX: pyhkcmd set voltage "HS 1" 3.2
+  Request a change for a target value.  The type and name should 
+  correspond to a target sensor, such as a setable voltage.  
+''')
+
+	
+########################################################################
+elif cmd == 'names':
+	
+	datatype = getarg(2)
+	
+	if datatype is None:
+		datatype = 'temperature'
+		print("No data type provided, assuming 'temperature'")
+		
+	names = pyhkd_get_names(DATA_LOG_FOLDER, datatype, today)
+	
+	if names is None or len(names) < 1:
+		print("No names found on the current day for the provided data type")
+	else:
+		print(sorted(names))
+		
+########################################################################
+elif cmd == 'get':
+	
+	datatype = getarg(2)
+	sensorname = getarg(3)
+	
+	if datatype is None:
+		datatype = 'temperature'
+		print("No data type provided, assuming 'temperature'")
+	
+	if sensorname is None:
+		
+		# Print all sensors of this type
+		names = pyhkd_get_names(DATA_LOG_FOLDER, datatype, today)
+		results = {}
+		for n in names:
+			ts, val = pyhkd_get_latest(DATA_LOG_FOLDER, datatype, n, today)
+			results[n] = val
+		pprint.pprint(results)
+		
+	else:
+		
+		# Print just the one sensor
+		ts, val = pyhkd_get_latest(DATA_LOG_FOLDER, datatype, sensorname, today)
+		print(val)
+		
+########################################################################
+elif cmd == 'set':
+	
+	datatype = getarg(2)
+	sensorname = getarg(3)
+	value = getarg(4)
+	
+	if value is None:
+		print("Insufficient arguments for the 'set' command")
+		exit()
+	
+	# Mapping from human names prefixes
+	set_command_map = {
+			"voltage": 'v',
+			"power": 'p',
+			"temperature": 't',
+			"current": 'i',
+			"currentramp": 'ir',
+			"state": 's'
+		}
+
+	if datatype not in set_command_map.keys():
+		print("Expecting a data type from the following list: " + str(list(set_command_map.keys())))
+		exit()
+		
+	prefix = set_command_map[datatype]
+	
+	pyhkd_set(prefix + "set", sensorname, value)
+	
+	print("Request sent! Reading back target value to check for success:")
+	
+	time.sleep(.5)
+	ts, val = pyhkd_get_latest(DATA_LOG_FOLDER, prefix + "targ", sensorname, today)
+	print(val)
+	
+########################################################################
+else:
+	sys.exit('Command not recognized.  Run "pyhkcmd help" for syntax help.')
+	
+	
+
+

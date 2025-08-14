@@ -1,0 +1,814 @@
+{% extends "base-page.html" %}
+
+% set base_page_url = url_for("pyhkpage.plot", cur_page_id=cur_page_id)
+
+{% block header %}
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	
+	<link rel="stylesheet" href="{{url_for('static', filename='dygraph-2.1.0.css')}}">
+	<script src="{{url_for('static', filename='dygraph-2.1.0-modjrh.min.js')}}"></script>
+	
+	<style>		
+		.dygraph-legend {
+			width: 150px !important;
+			left: 70px !important;
+			top: 5px !important;
+			background-color: rgba(255,255,255,0.9) !important;
+			padding: 10px;
+		}
+		.cursorpos {
+			left: 70px;
+			bottom: 40px ;
+			background-color: rgba(255,255,255,0.9) !important;
+			padding: 10px;
+			z-index:1000;
+			font-size: 12px;
+			position:absolute;
+		}
+
+	</style>
+	
+	<script src="{{url_for('static', filename='plot_helpers.js')}}"></script>
+		
+	<script type="text/javascript">
+		
+		// Plotting modes
+		var MODE_NORMAL = '0';
+		var MODE_ARCHIVE = '1';
+		var MODE_FAST = '2';
+				
+		var plots = [];
+		var last_data = [];
+		var latest_timestamp = [];
+		var curvelabels = [];
+		var curvelabelsarc = [];
+		var plotcolors = [];
+		var plotcolorsarc = [];
+		
+		% for plot_i in range(num_plots)
+			var mouse_x_p{{plot_i}} = -1;
+			var mouse_y_p{{plot_i}} = -1;
+		% endfor
+								
+		// Turn live plot updating on or off
+		function live_plot_enabled(enabled)
+		{
+			live_plot = enabled;
+			if (enabled)
+				$("#titlesuffix").html("");
+			else
+				$("#titlesuffix").html(" &ndash; Archive");
+		}
+		
+		// Function to add new data to the plots and tables
+		% for plot_i in range(num_plots)
+			function new_data_plot{{plot_i}} (data)
+			{
+				console.log("New data received");
+				
+				var updated = false;
+				
+				// Update the live table
+				str_table = "<table border=\"1\">";
+				str_table += "<tr><th>Name</th><th>{{axis_label[plot_i]}}</th></tr>";
+				for (tname in data)
+				{
+					val =  data[tname][1];
+					ts =  data[tname][0];
+					
+					// Indicate which values changed
+					animate_str = '';
+					if ((last_data[{{plot_i}}][tname]) && (last_data[{{plot_i}}][tname][0] != ts))
+					{
+						//console.log(tname + " has changed from " + last_data[{{plot_i}}][tname][1] + " to " + val);
+						animate_str = 'class="newvalue"';
+					}
+					
+					if (typeof val == 'number')
+					{
+						if ((Math.abs(val) > 1000) || (Math.abs(val) < 0.01))
+							val = val.toExponential(3);
+						else
+							val = val.toFixed(3);
+					
+						str_table += "<tr>";
+						str_table += "<td>" + tname + "</td>";
+						str_table += "<td  " + animate_str + ">" + val + "</td>";
+						str_table += "</tr>";
+					}
+				}
+				str_table += "</table>";
+				$('#datatable{{plot_i}}').html(str_table);	
+				
+				// Update the plot if it is ready to go
+				if ((typeof plots[{{plot_i}}].rawData_ !== 'undefined') && (plots[{{plot_i}}].rawData_ !== null) && live_plot)
+				{
+					for (var ni = 0; ni < {{page_config[cur_page_id]['plots'][plot_i]['names']|length}}; ni++) 
+					{
+						if (!data[curvelabels[{{plot_i}}][ni]])
+							continue;
+						var new_ts = data[curvelabels[{{plot_i}}][ni]][0];
+						if (new_ts > latest_timestamp[{{plot_i}}][curvelabels[{{plot_i}}][ni]])
+						{
+							latest_timestamp[{{plot_i}}][curvelabels[{{plot_i}}][ni]] = new_ts;
+							updated = true;
+							
+							var new_val = data[curvelabels[{{plot_i}}][ni]][1];
+							
+							// Look for this timestamp in case we already
+							// have it, and look for where to insert it if we don't
+							for (var ip = plots[{{plot_i}}].rawData_.length - 1; ip >= 0; ip--)
+							{
+								if (plots[{{plot_i}}].rawData_[ip][0] == new_ts)
+								{
+									console.log("debug: found, merging");
+									// We already have this timestamp
+									plots[{{plot_i}}].rawData_[ip][ni+1] = new_val;
+									break;
+								}
+								else if (plots[{{plot_i}}].rawData_[ip][0] < new_ts)
+								{
+									// We found the position to insert the new
+									// point at
+									var len = {{page_config[cur_page_id]['plots'][plot_i]['names']|length}};
+									if (sessionStorage.plot_mode == MODE_ARCHIVE)
+										len *= 2;
+									new_point = Array(len + 1);
+									new_point.fill(null);
+									new_point[0] = new_ts;
+									new_point[ni+1] = new_val;	
+									plots[{{plot_i}}].rawData_.splice(ip+1, 0, new_point);
+									break;
+								}
+							}
+						}
+						else
+						{
+							console.log("Old point, skipping");
+						}
+					}
+					
+					if (updated)
+					{
+						// Check if there are too many points
+						if (plots[{{plot_i}}].rawData_.length > 45000)
+							reduce_data(); // Refreshes for us
+						else
+							refresh_plot_p{{plot_i}}();
+					}
+				}
+				
+				last_data[{{plot_i}}] = data;
+			}
+		% endfor
+		
+		function refresh_plot_all()
+		{
+			% for plot_i in range(num_plots)
+				refresh_plot_p{{plot_i}}();
+			%endfor
+		}
+		
+		// Refresh/update plots
+		% for plot_i in range(num_plots)
+			function refresh_plot_p{{plot_i}}()
+			{
+				console.log("Refreshing plot {{plot_i}}");
+				was_zoomed = false;
+				old_zoom = [null, null];
+				
+				// Don't freeze in the zoom if there is no data
+				if (plots[{{plot_i}}].rawData_ && plots[{{plot_i}}].rawData_.length)
+				{
+					if (plots[{{plot_i}}].rawData_.length > 1 && plots[{{plot_i}}].isZoomed("y"))
+					{
+						was_zoomed = true;
+						old_zoom = plots[{{plot_i}}].yAxisRange();
+					}
+				}
+				
+				// We have to manually retain the y zoom when data is
+				// updated.  The x zoom is automatically retained.
+				plots[{{plot_i}}].updateOptions( { 'file': plots[{{plot_i}}].rawData_, 'valueRange': old_zoom} );
+				
+				// Fix y zoom problems when we load
+				if (!was_zoomed && !plots[{{plot_i}}].isZoomed("x"))
+					plots[{{plot_i}}].resetZoom();
+			}
+		%endfor
+		
+		// Decimate plotted data
+		function reduce_data()
+		{
+			% for plot_i in range(num_plots)
+				console.log("Ejecting every other data point (" + plots[{{plot_i}}].rawData_.length + " points at start)");
+				// This can have some weird effects if the sensors used
+				// are read at the same frequency but with different
+				// phase.  That is, it might only affect one sensor every
+				// time.
+				for (var i = 1; i <= plots[{{plot_i}}].rawData_.length; i += 2)
+				{
+					plots[{{plot_i}}].rawData_.splice(i, 1);
+				}
+				
+			% endfor	
+			
+			refresh_plot_all();		
+		}
+		
+		// Remove all data
+		function clear_data()
+		{
+			% for plot_i in range(num_plots)
+				console.log("Clearing data");
+				if (plots[{{plot_i}}].rawData_ && plots[{{plot_i}}].rawData_.length && plots[{{plot_i}}].rawData_.length > 1)
+				{
+					// Leave the last point
+					plots[{{plot_i}}].rawData_.splice(0, plots[{{plot_i}}].rawData_.length - 1);
+				}
+			% endfor
+			
+			refresh_plot_all();	
+		}
+		
+		// Request data updates (not full archives)			
+		function update_data() 
+		{
+			console.log("Requesting new data");
+			% for plot_i in range(num_plots)
+				$.getJSON("{{ url_for('pyhkpage.get_data_current', subfolder_label=(page_config[cur_page_id]['plots'][plot_i]['subfolder_label']|e), value_names=page_config[cur_page_id]['plots'][plot_i]['names'], units_name=unit_labels[plot_i]) }}", new_data_plot{{plot_i}});
+			% endfor
+		}			
+		
+		// Based on Dygraph defaultFormatter().  Produces a static legend.
+		% for plot_i in range(num_plots)
+			function legendFormatter_p{{plot_i}}(data) 
+			{
+				var html = '';
+				for (var i = 0; i < data.series.length; i++) 
+				{
+					var series = data.series[i];
+		
+					if (series.isVisible)
+						color = series.color;
+					else
+						color = 'lightgray';
+
+					if (html !== '') html += '<br/>';
+					html += "<span id='legendlbl_p{{plot_i}}_" + i + "' style='font-weight: bold; color: " + color + ";'>" + series.dashHTML + " " + series.labelHTML + "</span>";
+				}
+				return html;
+			}
+		% endfor
+	
+		// Show graph x,y pos of cursor
+		function updateCursorBox()
+		{
+			% for plot_i in range(num_plots)
+				var html = '';
+				if (mouse_x_p{{plot_i}} != -1 && mouse_y_p{{plot_i}} != -1)
+				{
+					html += '<b>Cursor Position</b><br>';
+					var d = new Date(plots[{{plot_i}}].toDataXCoord(mouse_x_p{{plot_i}}));
+					html += "<b>X:</b>  " + month_names[d.getMonth()] + " " + zeropad(d.getDate()) + " " + zeropad(d.getHours()) + ":" + zeropad(d.getMinutes()) + ":" + zeropad(d.getSeconds());
+					html += '<br>';
+					html += "<b>Y:</b>  " + pretty_si(plots[{{plot_i}}].toDataYCoord(mouse_y_p{{plot_i}}), 3);
+					$("#cursorpos{{plot_i}}").html(html);
+					$("#cursorpos{{plot_i}}").show();
+				}
+				else
+				{
+					$("#cursorpos{{plot_i}}").hide();
+				}
+			% endfor
+		}
+		
+		// Check if the page was called with a specific set of state
+		// variables.  If not, try to use what is stored or choose the default.
+		
+		% if target_date is not none
+			sessionStorage.plot_target_date = "{{target_date}}";
+		% else 
+			if (!(sessionStorage.plot_target_date))
+				sessionStorage.plot_target_date = 'today';
+		% endif
+		
+		% if num_days is not none
+			sessionStorage.plot_num_days = "{{num_days}}";
+		% else 
+			if (!(sessionStorage.plot_num_days))
+				sessionStorage.plot_num_days = 2;
+		% endif
+		
+		% if page_config[cur_page_id].get('fast_sampling', false)
+			sessionStorage.plot_mode = MODE_FAST;
+			sessionStorage.plot_target_date = 'today';
+		% else
+			% if plot_mode == MODE_ARCHIVE
+				// Allow URL to force us into archive mode
+				sessionStorage.plot_mode = MODE_ARCHIVE;
+			% else
+				// Set the default and override fast mode (this isn't a fast page)
+				if ((!sessionStorage.plot_mode) || ((sessionStorage.plot_mode != MODE_NORMAL) && (sessionStorage.plot_mode != MODE_ARCHIVE)))
+					sessionStorage.plot_mode = MODE_NORMAL;
+			% endif
+		% endif
+
+		% if plot_dt is not none
+			sessionStorage.plot_dt = "{{plot_dt}}";
+		% else 
+			if (!(sessionStorage.plot_dt))
+				sessionStorage.plot_dt = 0;
+		% endif
+
+		// Update the URL to include any changes to state variables
+		function pushstate()
+		{
+			var suffix = '';
+			if (sessionStorage.plot_mode == MODE_ARCHIVE)
+				suffix = '/compare/' + sessionStorage.plot_dt + 'sec';
+			
+			history.pushState({plot_target_date: sessionStorage.plot_target_date, plot_num_days: sessionStorage.plot_num_days, plot_mode: sessionStorage.plot_mode, plot_dt: sessionStorage.plot_dt, x_axis_range: sessionStorage.x_axis_range,},
+							  null,
+							  "{{base_page_url}}/" + sessionStorage.plot_num_days + '/' + sessionStorage.plot_target_date + suffix);
+
+		}
+
+		// Request archived data (not just changes)
+		function get_new_plot_data(push_state=true)
+		{
+			// Clear existing data first.  Helps us keep track of when 
+			// data loads by checking the size of plots[i].rawData_.
+			clear_data();
+
+			% for plot_i in range(num_plots)
+			
+				// Use position markers so the base URL can be generated
+				// server-side and then modified by the client side
+				% set date_url_tag = 'dateurllocation'
+				% set numdays_url_tag = 97979797
+				% set plotmode_url_tag = 86868686
+				% set dt_url_tag = 54545454
+				
+				% set pcfg = page_config[cur_page_id]['plots'][plot_i]
+				
+				% set params = {}
+				% do params.__setitem__('subfolder_label', pcfg['subfolder_label'])
+				% do params.__setitem__('value_names', pcfg['names'])
+				% do params.__setitem__('target_date', date_url_tag)
+				% do params.__setitem__('num_days', numdays_url_tag)
+				% do params.__setitem__('units_name', unit_labels[plot_i])
+				% do params.__setitem__('plot_mode', plotmode_url_tag)
+				% do params.__setitem__('plot_dt', dt_url_tag)
+				
+				// Auto generated URL
+				new_data_url = "{{ url_for('pyhkpage.get_data_archive', **params)}}";
+				
+				// Update the generic tags with actual values
+				new_data_url = new_data_url.replace('{{date_url_tag}}', sessionStorage.plot_target_date);
+				new_data_url = new_data_url.replace('{{numdays_url_tag}}', sessionStorage.plot_num_days);
+				new_data_url = new_data_url.replace('{{plotmode_url_tag}}', sessionStorage.plot_mode);
+				new_data_url = new_data_url.replace('{{dt_url_tag}}', sessionStorage.plot_dt);
+				console.log(new_data_url);
+				
+				console.log("Loaded x range: " + sessionStorage.x_axis_range);
+				
+				// Load the new data.  sessionStorage.x_axis_range
+				// correctly returns undefined if nothing is set,
+				// which leads to no zoom.
+				plots[{{plot_i}}].updateOptions( { 	'file': new_data_url,
+										dateWindow: eval(sessionStorage.x_axis_range),
+										valueRange: null} );
+			% endfor
+			
+			if (push_state)
+				pushstate();
+
+		}
+		
+		// Handler for Today button
+		function reset_date_defaults()
+		{
+			$("#datepicker").datepicker("setDate", new Date());
+			sessionStorage.plot_target_date = 'today';
+			sessionStorage.x_axis_range = "null";
+			live_plot_enabled(true);
+			get_new_plot_data();
+		}
+		
+		// Called whenever a plot is drawn.  The plot object is passed
+		// as 'me'.  'initial' is a bool indicating if this is the 
+		// first draw.
+		blockRedraw = false;
+		function drawCallback(me, initial) 
+		{
+			// The initial draw is useless
+			if (initial) 
+				return;
+				
+			// Prevent endless recursion
+			if (blockRedraw)
+				return;
+			
+			// Find my ID
+			var my_j = null;
+			for (var j = 0; j < {{num_plots}}; j++) 
+			{
+				if (plots[j] == me)
+					my_j = j;
+			}
+			
+			// Don't let empty plots drive anything
+			if (!plots[my_j].rawData_ || 
+				!plots[my_j].rawData_.length ||
+				plots[my_j].rawData_.length <= 1 ||
+				jQuery.isEmptyObject(last_data[my_j]))
+			{
+				return;
+			}
+					
+			
+			// Remember the x zoom across pages		
+			if (me.isZoomed("x"))
+			{
+				sessionStorage.x_axis_range = JSON.stringify(me.xAxisRange());
+			}
+			else
+			{
+				sessionStorage.x_axis_range = "null";
+			}
+			console.log("Saved x range: " + sessionStorage.x_axis_range);
+						
+			// Sync x axes for multi-plot pages.
+			// https://stackoverflow.com/questions/25191580/synchronize-dygraphs-where-some-have-a-double-y-axis
+			% if num_plots > 1
+					
+				blockRedraw = true;
+				
+				var range = me.xAxisRange();
+				for (var j = 0; j < {{num_plots}}; j++) 
+				{
+					if (plots[j] == me) continue;
+					plots[j].updateOptions( { 'dateWindow': range}, true );
+				}
+				
+				// Fix the y scaling (we changed things)
+				refresh_plot_all();
+				
+				blockRedraw = false;
+			
+			% endif
+		};
+		
+		// Redirect the browser either to or from the comparison plot
+		function loadPlotURL()
+		{
+			% set date_url_tag = 'dateurllocation'
+			% set numdays_url_tag = 97979797
+
+			if (sessionStorage.plot_mode == MODE_ARCHIVE)
+				new_data_url = "{{ url_for('pyhkpage.plot_compare', cur_page_id=cur_page_id, num_days=numdays_url_tag, target_date=date_url_tag)}}";
+			else
+				new_data_url = "{{ url_for('pyhkpage.plot', cur_page_id=cur_page_id, num_days=numdays_url_tag, target_date=date_url_tag)}}";
+
+			new_data_url = new_data_url.replace('{{date_url_tag}}', sessionStorage.plot_target_date);
+			new_data_url = new_data_url.replace('{{numdays_url_tag}}', sessionStorage.plot_num_days);
+			
+			console.log("Changing URLs:");
+			console.log(new_data_url);
+			window.location.href = new_data_url;
+		}
+		
+		// Handle slider update button
+		function update_dt()
+		{
+			var dt = parseInt($("#dtslide").val()) + parseInt($("#dtslidefine").val());
+			sessionStorage.plot_dt = dt;
+			get_new_plot_data();
+			
+		}
+		
+		// Handle comparison checkbox
+		function changeLiveOverplot(cb) {
+			sessionStorage.x_axis_range = "null";
+			if (cb.checked)
+			{
+				console.log("Live overplot enabled");
+				sessionStorage.plot_mode = MODE_ARCHIVE;	
+			}
+			else
+			{
+				console.log("Live overplot disabled");
+				sessionStorage.plot_mode = MODE_NORMAL;
+			}
+			loadPlotURL();	
+		}
+
+		//// Document Ready ////////////////////////////////////////////
+		$( document ).ready(function() 
+		{				
+			% for plot_i in range(num_plots)
+
+				// Load labels from python into js arrays
+				curvelabels[{{plot_i}}] = [];
+				curvelabelsarc[{{plot_i}}] = [];
+				% for n in page_config[cur_page_id]['plots'][plot_i]['names']
+					curvelabels[{{plot_i}}].push("{{ n|e }}");
+					curvelabelsarc[{{plot_i}}].push("[Arc] {{ n|e }}");
+				% endfor
+				
+				// Load colors from python into js arrays
+				plotcolors[{{plot_i}}] = [];
+				plotcolorsarc[{{plot_i}}] = [];
+				% for n_i in range(page_config[cur_page_id]['plots'][plot_i]['names']|length) 
+					var c = "{{ page_config[cur_page_id]['plots'][plot_i]['colors'][n_i]|e }}";
+					plotcolors[{{plot_i}}].push(c);		
+					// Same color with some transparency 		
+					plotcolorsarc[{{plot_i}}].push("rgba(" + convertToHexColor(c).slice(4,-1) + ",0.4)");
+				% endfor
+
+				// Keep track of received data
+				last_data[{{plot_i}}] = {};
+				latest_timestamp[{{plot_i}}] = {};
+				for (var ni = 0; ni < {{page_config[cur_page_id]['plots'][plot_i]['names']|length}}; ni++) 
+				{
+					latest_timestamp[{{plot_i}}][curvelabels[{{plot_i}}][ni]] = 0;
+				}
+	
+			% endfor
+
+			today = $.datepicker.formatDate('yymmdd', new Date());
+			
+			live_plot_enabled(false);
+			if (sessionStorage.plot_target_date == today || sessionStorage.plot_target_date == 'today')
+				live_plot_enabled(true);
+			
+			updateCursorBox();
+			
+			% set linestyle = {'solid': 'null', 'dashed': [5,5], 'dotted': [1,2]}
+			
+			// Create the plots
+			% for plot_i in range(num_plots)
+			
+				% set ls = page_config[cur_page_id]['plots'][plot_i]['linestyles']
+				% set logscale = page_config[cur_page_id]['plots'][plot_i]['log_scale']
+				% if not logscale
+					% set logscale = 'false'
+				% else
+					% set logscale = 'true'
+				% endif
+				% set names = page_config[cur_page_id]['plots'][plot_i]['names']
+
+				var labels = ["Date"].concat(curvelabels[{{plot_i}}]);	
+				var colors = plotcolors[{{plot_i}}];
+				
+				// If we are comparing, add the extra labels and colors
+				if (sessionStorage.plot_mode == MODE_ARCHIVE)
+				{	
+					labels = labels.concat(curvelabelsarc[{{plot_i}}]);
+					colors = colors.concat(plotcolorsarc[{{plot_i}}]);
+					
+					// Show the plot compare specific controls
+					$('#comparecontrols').css({'display': 'inline-block'});
+				}
+
+				var dummy_data = new Array(labels.length).fill(null);				
+				dummy_data[0] = 0;
+
+				// Main plot objects
+				plots[{{plot_i}}] = new Dygraph(document.getElementById("graphdiv{{plot_i}}"), 
+					[dummy_data],
+					{
+						labels: labels,
+						colors: colors,
+						connectSeparatedPoints: true,
+						strokeWidth: 2,					
+						drawPoints: false,
+						labelsSeparateLines: true,
+						legend: "always",
+						legendFormatter: legendFormatter_p{{plot_i}},
+						ylabel: "",
+						digitsAfterDecimal: 3,
+						highlightCircleSize: 0,
+						logscale: {{logscale}},
+						drawCallback: drawCallback,
+						/*labelsDiv: "labels",*/
+						series: {
+						% for lsi in range([ls|length,names|length]|min)
+							'{{names[lsi]}}': {strokePattern: {{linestyle[ls[lsi]]}}}
+							,
+						% endfor
+						% for lsi in range([ls|length,names|length]|min)
+							'[Arc] {{names[lsi]}}': {strokePattern: {{linestyle[ls[lsi]]}}, strokeWidth: 1}
+							% if lsi < ls|length-1
+							,
+							% endif
+						% endfor
+						},
+						axes: 
+						{
+							x:
+							{
+								valueFormatter: xValueFormatter,
+								ticker: Dygraph.dateTicker,
+								% if plot_i == num_plots - 1
+									axisLabelFormatter: formatDate
+								% else
+									axisLabelFormatter: (param) => {return "";}
+								% endif
+							},
+							y:
+							{
+								//~ axisLabelFormatter: formatValue
+								ticker: customNumericTicks
+							}			
+						}
+					});
+			% endfor
+			
+			// Get archived data
+			get_new_plot_data();		
+			
+			// Main update timer
+			update_data();
+			% if page_config[cur_page_id].get('fast_sampling', false)
+				var update_interval = 100;
+			% else
+				var update_interval = 5000;
+			% endif
+			var update_timer = setInterval(update_data, update_interval);
+			
+			$("#datepicker").datepicker({
+				dateFormat: "yymmdd",
+				defaultDate: sessionStorage.plot_target_date,
+				onSelect: function(dateText) {
+					console.log("Loading date: " + dateText);
+					sessionStorage.x_axis_range = "null";
+					today = $.datepicker.formatDate('yymmdd', new Date());
+					if (today == dateText)
+					{
+						live_plot_enabled(true);
+						sessionStorage.plot_target_date = 'today';
+					}
+					else
+					{
+						live_plot_enabled(false);
+						sessionStorage.plot_target_date = dateText;
+					}
+					get_new_plot_data();
+				}
+			});
+			
+			$("#numdaysprior").val(sessionStorage.plot_num_days);
+			console.log("plot live compare");
+			console.log(sessionStorage.plot_mode);
+			$("#chkplotlive").prop("checked",parseInt(sessionStorage.plot_mode)==MODE_ARCHIVE);
+			$("#dtslide").val(sessionStorage.plot_dt);
+			$("#dtslidefine").val(0);
+
+			$("#numdaysprior").change(function(evt) {
+				sessionStorage.plot_num_days = $("#numdaysprior").val();
+				get_new_plot_data();
+			});
+			
+			% for plot_i in range(num_plots)
+			
+				// Keep track of mouse position on the plots
+				$("#graphdiv{{plot_i}}").mousemove(function(evt) {
+					// Find the mouse pos relative to the graph canvas
+					var objref = $('#graphdiv{{plot_i}}').children();
+					mouse_x_p{{plot_i}} = (evt.pageX - objref.offset().left);
+					mouse_y_p{{plot_i}} = (evt.pageY - objref.offset().top);
+					updateCursorBox();
+				});
+				
+				// Keep track of when the mouse leaves so we can hide the position box
+				$("#graphdiv{{plot_i}}").mouseleave(function(evt) {
+					mouse_x_p{{plot_i}} = -1;
+					mouse_y_p{{plot_i}} = -1;
+					updateCursorBox();
+				});
+			
+				// Legend click handler
+				function click_legend_label_p{{plot_i}}(evt) {
+					// Toggle visibility
+					idnum = evt.currentTarget.id.slice("legendlbl_p{{plot_i}}_".length);
+					vis = plots[{{plot_i}}].visibility();
+					plots[{{plot_i}}].setVisibility(idnum,!vis[idnum]);
+				}
+				
+				// Register legend click handler
+				for (i = 0; i < {{page_config[cur_page_id]['plots'][plot_i]['names']|length * 2}}; i++)
+					$(document).on('click',"#legendlbl_p{{plot_i}}_" + i, click_legend_label_p{{plot_i}});
+				
+			% endfor
+						
+			// Recall the previous state if the back button was pressed
+			$(window).on("popstate", function(e) {
+				if (e.originalEvent.state)
+				{
+					
+					sessionStorage.plot_num_days = e.originalEvent.state.plot_num_days;
+					sessionStorage.plot_target_date = e.originalEvent.state.plot_target_date;
+					sessionStorage.plot_mode = e.originalEvent.state.plot_mode;
+					sessionStorage.plot_dt = e.originalEvent.state.plot_dt;
+					sessionStorage.x_axis_range = e.originalEvent.state.x_axis_range;
+					
+					$("#dtslide").val(sessionStorage.plot_dt);
+					$("#dtslidefine").val(0);
+					$("#numdaysprior").val(sessionStorage.plot_num_days);
+					$("#chkplotlive").prop("checked",parseInt(sessionStorage.plot_mode));
+					
+					if (sessionStorage.plot_target_date == 'today')
+					{
+						live_plot_enabled(true);
+						$("#datepicker").datepicker("setDate", new Date());
+					}
+					else
+					{
+						live_plot_enabled(false);
+						$("#datepicker").datepicker("setDate", sessionStorage.plot_target_date);
+					}
+					
+					get_new_plot_data(false);
+				}
+			});
+			
+		});
+		//// Document Ready ////////////////////////////////////////////
+
+				
+	</script>
+{% endblock %}
+
+{% block titlesuffix %}<span id="titlesuffix" style=""></span>{% endblock %}
+
+{% block content %}
+
+	% set ysize_total = 600
+	% set ysize_each = ysize_total//num_plots
+
+	<div class="clearfix" style="width:1200px; height:{{ysize_total}}px; padding-bottom:80px">
+		
+		<div class="column" style="height:{{ysize_total}}px; padding-left:0px; padding-right:0px;">
+			% for i in range(num_plots)
+				<div>
+					<div class="column" style="width:20px; height:{{ysize_each}}px; padding-left:0px; padding-right:0px;">
+						<div style="width:{{ysize_each}}px; text-align:center; transform-origin: left top; transform: translateY({{ysize_each}}px) rotate(270deg); ">{{axis_label[i]}}</div>
+					</div>
+					
+					<div class="column" style="width:800px; height:{{ysize_each}}px; position:relative;">
+						<div id="graphdiv{{i}}" style="width:100%; height:100%; position:absolute; top:0px; left:0px;"></div>
+						<div id="cursorpos{{i}}" class="cursorpos"></div>
+					</div>
+				</div>
+			% endfor
+		</div>
+		
+		<div class="column" style="width:250px; height:{{ysize_total}}px; padding-left:30px;">
+			% if not page_config[cur_page_id].get('fast_sampling', false)
+				<div id="datepicker"></div>
+				<p style="font-size:12px"><button onclick="reset_date_defaults()">Today</button>  | Show 
+				<select id="numdaysprior">
+					% for i in range(1,6)
+					<option value={{i}}>{{i}}</option>
+					% endfor 
+				</select>
+				day(s)</p>
+				<p style="font-size:12px">			
+				<label><input id="chkplotlive" type='checkbox' onclick='changeLiveOverplot(this);'>Plot Archive Over Live</label>
+				<div id="comparecontrols" style="display: none; font-size:12px;">
+					<div style="padding-left:5px; padding-bottom:5px;">Adjust time offset:</div>
+					<label for='dtslide'>-6d</label> <input onchange="update_dt()" id="dtslide" type="range" min="-518400" max="518400" value="0" style="width:140px; margin-left:5px; margin-right:5px; vertical-align:middle;"> <label for='dtslide'>+6d</label> 
+					<br><label for='dtslidefine'>-6h</label>  <input onchange="update_dt()" id="dtslidefine" type="range" min="-43200" max="43200" value="0" style="width:140px; margin-left:5px; margin-right:5px; vertical-align:middle;"> <label for='dtslidefine'>+6h</label>
+				</div>
+				</p>
+			% else
+				<h3>Fast Plotting Mode</h3>
+			% endif
+			<h4>Live Values:</h4>
+			% for i in range(num_plots)
+				<div class="prettytable" id="datatable{{i}}"></div>
+				<br>
+			% endfor
+		</div>	
+		
+	</div>
+
+	<p>
+		<b>Zoom X:</b> click and drag horizontally<br>
+		<b>Zoom Y:</b> click and drag vertically<br>
+		<b>Pan:</b> shift+click and drag <br>
+		<b>Reset Zoom:</b> double click <br>
+		<b>Hide/Show Line:</b> click the name in the plot legend <br>
+		<b>Load Old Data:</b> use the date picker<br>
+		
+		<button onclick="reduce_data()" style="margin-top:10px;">Downsample Plotted Data</button><br>
+		<button onclick="clear_data()" style="margin-top:10px;">Clear Plotted Data</button>
+		
+	</p>
+	
+	
+
+{% endblock %}

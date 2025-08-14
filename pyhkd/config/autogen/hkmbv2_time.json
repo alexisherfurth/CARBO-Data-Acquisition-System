@@ -1,0 +1,418 @@
+[
+    {
+        "id": "meta",
+        "type": "meta",
+        "name": "meta",
+        "version": "HKMBv2",
+        "port": "/dev/ttyHKMBv2Box0",
+        "serial_num": 0
+    },
+    {
+        "id": "T00",
+        "type": "thermometer",
+        "alias": "C2:0",
+        "name": "Module A3",
+        "excitation": -1200.0
+    },
+    {
+        "id": "T01",
+        "type": "thermometer",
+        "alias": "C2:1",
+        "name": "Module A4",
+        "excitation": -1200.0
+    },
+    {
+        "id": "T02",
+        "type": "thermometer",
+        "alias": "C2:2",
+        "name": "Module A5",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T03",
+        "type": "thermometer",
+        "alias": "C2:3",
+        "name": "Spectrometer A",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T10",
+        "type": "thermometer",
+        "alias": "C3:0",
+        "name": "Fridge UC",
+        "excitation": 100.0
+    },
+    {
+        "id": "T11",
+        "type": "thermometer",
+        "alias": "C3:1",
+        "name": "1K Strap",
+        "excitation": 150.0
+    },
+    {
+        "id": "T12",
+        "type": "thermometer",
+        "alias": "C3:2",
+        "name": "1K Lens",
+        "excitation": 300.0
+    },
+    {
+        "id": "T13",
+        "type": "thermometer",
+        "alias": "C3:3",
+        "name": "Fridge IC",
+        "excitation": 100.0
+    },
+    {
+        "id": "T20",
+        "type": "thermometer",
+        "alias": "A3:0",
+        "name": "1K Plate",
+        "excitation": 100.0
+    },
+    {
+        "id": "T21",
+        "type": "thermometer",
+        "alias": "A3:1",
+        "name": "1K Pot",
+        "excitation": 300.0
+    },
+    {
+        "id": "T22",
+        "type": "thermometer",
+        "alias": "A3:2",
+        "name": "Module A0",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T23",
+        "type": "thermometer",
+        "alias": "A3:3",
+        "name": "Module A1",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T30",
+        "type": "thermometer",
+        "alias": "C1:0",
+        "name": "IC Strap Warm",
+        "excitation": 100.0
+    },
+    {
+        "id": "T31",
+        "type": "thermometer",
+        "alias": "C1:1",
+        "name": "FPU #1",
+        "excitation": 100.0
+    },
+    {
+        "id": "T32",
+        "type": "thermometer",
+        "alias": "C1:2",
+        "name": "FPU #2",
+        "excitation": 100.0
+    },
+    {
+        "id": "T33",
+        "type": "thermometer",
+        "alias": "C1:3",
+        "name": "Spectrometer B",
+        "excitation": 100.0
+    },
+    {
+        "id": "T40",
+        "type": "thermometer",
+        "alias": "G1:0",
+        "name": "300K Window Load",
+        "excitation": -200.0
+    },
+    {
+        "id": "T41",
+        "type": "thermometer",
+        "alias": "G1:1",
+        "name": "300K Front Plate",
+        "excitation": -200.0
+    },
+    {
+        "id": "T42",
+        "type": "thermometer",
+        "alias": "G1:2",
+        "name": "300K Plate",
+        "excitation": -200.0
+    },
+    {
+        "id": "T43",
+        "type": "thermometer",
+        "alias": "G2:2",
+        "name": "300K MCE",
+        "excitation": -200.0
+    },
+    {
+        "id": "T50",
+        "type": "thermometer",
+        "alias": "HKMBv2b0_T50",
+        "name": "Fixed 0.1k",
+        "excitation": -5.0
+    },
+    {
+        "id": "T51",
+        "type": "thermometer",
+        "alias": "HKMBv2b0_T51",
+        "name": "Fixed 1k",
+        "excitation": -13.0
+    },
+    {
+        "id": "T52",
+        "type": "thermometer",
+        "alias": "HKMBv2b0_T52",
+        "name": "Fixed 10k",
+        "excitation": -111.0
+    },
+    {
+        "id": "T53",
+        "type": "thermometer",
+        "alias": "HKMBv2b0_T53",
+        "name": "Fixed 100k",
+        "excitation": -730.0
+    },
+    {
+        "id": "H00",
+        "type": "heater",
+        "name": "Pump 3 Heater",
+        "alias": "D01",
+        "pid_p": 0.0,
+        "pid_i": 0.0,
+        "pid_d": 0.0,
+        "pid_therm": null
+    },
+    {
+        "id": "H01",
+        "type": "heater",
+        "name": "Module 3 Heater",
+        "alias": "D02",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H02",
+        "type": "heater",
+        "name": "Pump 1 Heater",
+        "alias": "D03",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H03",
+        "type": "heater",
+        "name": "HS 2 Heater",
+        "alias": "D04",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H04",
+        "type": "heater",
+        "name": "HS 1 Heater",
+        "alias": "D05",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H05",
+        "type": "heater",
+        "name": "Pump 2 Heater",
+        "alias": "D06",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H06",
+        "type": "heater",
+        "name": "HS 5 Heater",
+        "alias": "D07",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H07",
+        "type": "heater",
+        "name": "HS 4 Heater",
+        "alias": "D08",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H08",
+        "type": "heater",
+        "name": "HS 3 Heater",
+        "alias": "D09",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H09",
+        "type": "heater",
+        "name": "HS 6 Heater",
+        "alias": "D10",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H10",
+        "type": "heater",
+        "name": "Module 4 Heater",
+        "alias": "D11",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H11",
+        "type": "heater",
+        "name": "Evap 1 Heater",
+        "alias": "D12",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H12",
+        "type": "heater",
+        "name": "Evap 2 Heater",
+        "alias": "D13",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H13",
+        "type": "heater",
+        "name": "1K Pot Heater",
+        "alias": "D14",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H14",
+        "type": "heater",
+        "name": "HS 7 Heater",
+        "alias": "D15",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H15",
+        "type": "heater",
+        "name": "Module 2 Heater",
+        "alias": "D16",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H16",
+        "type": "heater",
+        "name": "Module 5 Heater",
+        "alias": "D17",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H17",
+        "type": "heater",
+        "name": "1K Strap Heater",
+        "alias": "D18",
+        "pid_p": 10.0,
+        "pid_i": 1.0,
+        "pid_d": 0.0,
+        "pid_therm": "T11"
+    },
+    {
+        "id": "H18",
+        "type": "heater",
+        "name": "Fridge UC Heater",
+        "alias": "D19",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H19",
+        "type": "heater",
+        "name": "Module 1 Heater",
+        "alias": "D20",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H20",
+        "type": "heater",
+        "name": "Module 0 Heater",
+        "alias": "D21",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H21",
+        "type": "heater",
+        "name": "350mK Strap Heater",
+        "alias": "D22",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H22",
+        "type": "heater",
+        "name": "FPU Heater",
+        "alias": "D23",
+        "pid_p": 0.0,
+        "pid_i": 0.0,
+        "pid_d": 0.0,
+        "pid_therm": null
+    },
+    {
+        "id": "H23",
+        "type": "heater",
+        "name": "FPU Heater #2",
+        "alias": "D24",
+        "pid_p": 14.0,
+        "pid_i": 2.2,
+        "pid_d": 0.0,
+        "pid_therm": "T03"
+    }
+]

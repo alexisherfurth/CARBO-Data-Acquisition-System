@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# If you are having trouble with this, make sure you have journal permissioms:
+# sudo usermod -a -G systemd-journal USERNAME
+
+# "-o cat" hides the redundant journal timestamp
+
+journalctl -f -u pyhkd.service -o cat | grep -i --line-buffered 'pid' | ccze -m ansi
+

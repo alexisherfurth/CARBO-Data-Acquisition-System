@@ -1,0 +1,14 @@
+
+from .helpers import R2T_polynomial
+
+# RU2841, in TIME
+R2T_RU2841_R_BORDER = [3550,5120,12370]
+R2T_RU2841_A = [[39.224,-0.06074,3.972E-5,-1.3252E-8,2.2289E-12,-1.5029E-16],
+				[2.8471,-0.0013864,3.2379E-7,-4.3012E-11,3.4869E-15,-1.4472E-19],
+				[1.0943,-0.00024139,2.2556E-8,-6.6496E-13,-2.0752E-17,1.1572E-21],
+				[0.35901,-2.8067E-5,1.1768E-9,-2.5776E-14,2.8243E-19,-1.2228E-24]]
+def R2T_RU2841(inRes):
+	for i in range(len(R2T_RU2841_R_BORDER)):
+		if inRes < R2T_RU2841_R_BORDER[i]:
+			return R2T_polynomial(inRes, R2T_RU2841_A[i])
+	return R2T_polynomial(inRes, R2T_RU2841_A[-1])

@@ -1,0 +1,59 @@
+[
+		{
+		"type": "ls224",
+		"port": "/dev/ttyUSB0",
+		"wait_time": 3,
+		"channels": 
+				[
+					{"id": "A", "type": "temperature", "name": "Sensor A"},
+					{"id": "B", "type": "temperature", "name": "Sensor B"},
+					{"id": "C1", "type": "temperature", "name": "Sensor C1"},
+					{"id": "D1", "type": "temperature", "name": "Sensor D1"},
+					{"id": "C2", "type": "temperature", "name": "Sensor C2"},
+					{"id": "D2", "type": "temperature", "name": "Sensor D2"},
+					{"id": "C3", "type": "temperature", "name": "Sensor C3"},
+					{"id": "D3", "type": "temperature", "name": "Sensor D3"},
+					{"id": "C4", "type": "temperature", "name": "Sensor C4"},
+					{"id": "D4", "type": "temperature", "name": "Sensor D4"},
+					{"id": "C5", "type": "temperature", "name": "Sensor C5"},
+					{"id": "D5", "type": "temperature", "name": "Sensor D5"}
+				]
+	},
+	{
+        "type": "mks_pressure",
+        "wait_time": 1,
+        "enable_filter": true,
+        "filter_cutoff": 0.1,
+        "channels": [
+            {"name": "Pressure", "type": "pressure"},
+            {"name": "Filtered Pressure", "type": "pressure"}
+        ]
+    },
+	{
+		"type": "thermocouple",
+		"cs_pin": "D5",
+		"thermocouple_type": "E",
+		"wait_time": 1,
+		"channels": [
+			{"name": "Thermocouple 1", "type": "temperature"}
+		]
+	},
+	{
+		"type": "thermocouple", 
+		"cs_pin": "D6",
+		"thermocouple_type": "E",
+		"wait_time": 1,
+		"channels": [
+			{"name": "Thermocouple 2", "type": "temperature"}
+		]
+	},
+	{
+		"type": "thales_xpcde4865",
+		"port": "/dev/ttyUSB1",
+		"wait_time": 3,
+		"channels": [
+			{"name": "Temperature", "type": "temperature"},
+			{"name": "Voltage", "type": "voltage"}
+		]
+	}
+]

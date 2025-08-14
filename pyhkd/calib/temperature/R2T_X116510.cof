@@ -1,0 +1,29 @@
+Number of fit ranges:                  2
+FIT RANGE:                             1
+Fit type for range1:                   LOG
+Order of fit range1:                   5
+Zlower for fit range1:                 2.63684351624554
+Zupper for fit range1:                 3.83574248668616
+Lower Resist. limit for fit range1:    542.3537
+Upper Resist. limit for fit range1:    5867.303
+C(0) Equation 1:                       5.41654062583309E+01
+C(1) Equation 1:                      -4.45520207281527E+01
+C(2) Equation 1:                       9.75338333754648E+00
+C(3) Equation 1:                      -1.40439337256970E+00
+C(4) Equation 1:                       1.56471178809859E-01
+C(5) Equation 1:                      -1.07407275612884E-02
+FIT RANGE:                             2
+Fit type for range2:                   LOG
+Order of fit range2:                   7
+Zlower for fit range2:                 1.91857124525898
+Zupper for fit range2:                 2.80814864972043
+Lower Resist. limit for fit range2:    84.7205
+Upper Resist. limit for fit range2:    542.3537
+C(0) Equation 2:                       1.86150898035518E+02
+C(1) Equation 2:                      -1.19344480039205E+02
+C(2) Equation 2:                       2.08731919729257E+01
+C(3) Equation 2:                      -3.06605250061412E+00
+C(4) Equation 2:                       5.24905907507436E-01
+C(5) Equation 2:                      -9.33148567637781E-02
+C(6) Equation 2:                       1.36077295378160E-02
+C(7) Equation 2:                      -2.80176075561246E-03

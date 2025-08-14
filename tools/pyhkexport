@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+# Export all values from a given date range via the website
+
+import sys
+import datetime
+import os
+import requests
+import re
+import urllib
+
+if len(sys.argv) != 7:
+	print('Execute as:\n  ./pyhkexport.py site_url site_user site_password data_type start_date stop_date \n where data_type is temperature, voltage, resistance, etc. and dates are of the form YYYYMMDD.')
+	print('Example: ./pyhkexport.py time.pyhk.net my_user my_password temperature 20170112 20170113')
+	exit()
+
+site_url = str(sys.argv[1])
+site_user = str(sys.argv[2])
+site_password = str(sys.argv[3])
+data_type = str(sys.argv[4])
+date_start = str(sys.argv[5])
+date_stop = str(sys.argv[6])
+
+if 'http' not in site_url:
+	site_url = 'https://' + site_url
+
+# Get a list of all valid data names for that time range
+url = f"{site_url}/data/export/{data_type}/{date_start}/{date_stop}/names"
+d = requests.get(url, auth=(site_user, site_password)).text.strip()
+d = d.split('<br>')
+d = [re.sub(r'<[^>]*>', '', dd) for dd in d if len(dd) > 0]
+
+print("Saving the following names:", d)
+
+for name in d:
+	
+	safename = urllib.parse.quote(name)
+	url = f"{site_url}/data/export/{data_type}/{date_start}/{date_stop}/{safename}.txt"
+	
+	d = requests.get(url, auth=(site_user, site_password)).text.strip()
+	
+	safename = safename.replace("%20", "+")
+	fname = f"pyhk_export_{data_type}_{safename}_{date_start}_{date_stop}.txt"
+	
+	print("Saving", fname)
+	f = open(fname, 'w')
+	f.write(d)
+	f.close()
+

@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 0,
+        "name": "Chan 00"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 1,
+        "name": "Chan 01"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 2,
+        "name": "Chan 02"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 3,
+        "name": "Chan 03"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 4,
+        "name": "Chan 04"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 5,
+        "name": "Chan 05"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 6,
+        "name": "Chan 06"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 7,
+        "name": "Chan 07"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 8,
+        "name": "Chan 08"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 9,
+        "name": "Chan 09"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 10,
+        "name": "Chan 10"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 11,
+        "name": "Chan 11"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 12,
+        "name": "Chan 12"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 13,
+        "name": "Chan 13"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 14,
+        "name": "Chan 14"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 15,
+        "name": "Chan 15"
+    }
+]

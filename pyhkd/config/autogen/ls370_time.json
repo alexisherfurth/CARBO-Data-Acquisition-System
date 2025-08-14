@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 0,
+        "name": "Pump 1"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 1,
+        "name": "Pump 2"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 15,
+        "channel": 2,
+        "name": "Evap 1"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 15,
+        "channel": 3,
+        "name": "Evap 2"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 4,
+        "name": "LS370_04"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 15,
+        "channel": 5,
+        "name": "LS370_05"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 15,
+        "channel": 6,
+        "name": "LS370_06"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 7,
+        "name": "LS370_07"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 8,
+        "name": "LS370_08"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 16,
+        "channel": 9,
+        "name": "LS370_09"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 10,
+        "name": "LS370_10"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 11,
+        "name": "LS370_11"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 11,
+        "channel": 12,
+        "name": "LS370_12"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 13,
+        "name": "LS370_13"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 14,
+        "name": "LS370_14"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 15,
+        "name": "LS370_15"
+    }
+]

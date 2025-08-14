@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+
+<head>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	{% block header %}{% endblock %}
+	
+	<title>{{site_name|e if site_name else "PyHK"}} - {{page_title}}</title>
+	
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		.mainnavpanel ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			width: 200px;
+			background-color: #616265;
+			position: fixed;
+			z-index: 100000;
+			height: 100%;
+			overflow: auto;
+			
+		}
+
+		.mainnavpanel li a, .mainnavpanel li h3, .mainnavpanel li h4 {
+			display: block;
+			color: #000;
+			padding: 7px 16px;
+			text-decoration: none;
+			color: white;
+		}
+
+
+		.mainnavpanel li a.active {
+			background-color: #FF6E1E;
+			color: white;
+		}
+
+		.mainnavpanel li a:hover:not(.active) {
+			background-color: #76777B;
+			color: white;
+		}
+		
+		/* Highlight every other */
+		.prettytable:not(.prettytable-quad) tr:nth-child(odd) {
+			background-color: #E0E0E0
+		}
+		
+		/* Highlight groups of four */
+		.prettytable-quad tr:nth-child(8n+6) {
+		  background: #E0E0E0;
+		}
+		.prettytable-quad tr:nth-child(8n+7) {
+		  background: #E0E0E0;
+		}
+		.prettytable-quad tr:nth-child(8n+8) {
+		  background: #E0E0E0;
+		}
+		.prettytable-quad tr:nth-child(8n+9) {
+		  background: #E0E0E0;
+		}
+				
+		.prettytable td {
+			padding: 6px;
+			text-align: center;
+		}
+		.prettytable th {
+			padding: 6px;
+			text-align: center;
+			font-weight: bold;
+			background-color: #FF6E1E;
+			color: white;
+		}
+		.prettytable {
+			font-size: 14px;
+		}
+		table {
+			border-collapse: collapse;
+			border-color: black;
+		}
+		.column {
+			float: left;
+			padding: 10px;
+		}
+		.clearfix::after {
+			content: "";
+			clear: both;
+			display: table;
+		}		
+		
+		@keyframes updatepinganim 
+		{
+			0% 
+			{
+				text-shadow: 0 0 1px black;
+			}
+			100% 
+			{
+				text-shadow: none;
+			}
+		}
+		
+		.newvalue 
+		{
+			animation-duration: 2s;
+			animation-timing-function: ease-in;
+			animation-delay: 0s;
+			animation-iteration-count: 1;
+			animation-name: updatepinganim;
+		}
+		
+		/* jquery UI theme */
+		
+		.ui-datepicker {
+			font-size: 11px;
+		}
+		
+		.ui-state-active,
+		.ui-widget-content .ui-state-active,
+		.ui-widget-header .ui-state-active,
+		a.ui-button:active,
+		.ui-button:active,
+		.ui-button.ui-state-active:hover {
+			border: 1px solid #616265;
+			background: #FF6E1E;
+			font-weight: normal;
+			color: #ffffff;
+		}
+		.ui-state-highlight,
+		.ui-widget-content .ui-state-highlight,
+		.ui-widget-header .ui-state-highlight {
+			border: 1px solid #FF6E1E;
+			background: #f6f6f6;
+			color: #454545;
+		}
+		
+		.ui-corner-all,
+		.ui-corner-top,
+		.ui-corner-left,
+		.ui-corner-tl {
+			border-top-left-radius: 0;
+		}
+		.ui-corner-all,
+		.ui-corner-top,
+		.ui-corner-right,
+		.ui-corner-tr {
+			border-top-right-radius: 0;
+		}
+		.ui-corner-all,
+		.ui-corner-bottom,
+		.ui-corner-left,
+		.ui-corner-bl {
+			border-bottom-left-radius: 0;
+		}
+		.ui-corner-all,
+		.ui-corner-bottom,
+		.ui-corner-right,
+		.ui-corner-br {
+			border-bottom-right-radius: 0;
+		}
+		
+		/* Hide the arrows for number fields */
+		input[type='number'] {
+			-moz-appearance:textfield;
+		}
+		input[type=number]::-webkit-inner-spin-button,
+		input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	</style>
+	
+	<script type="text/javascript">
+		
+		$( document ).ready(function() 
+		{
+			const url_params = new URLSearchParams(window.location.search);
+			
+			// Hide the main navigation panel and page title
+			if (url_params.get('hidenav') == 'true')
+			{
+				document.getElementById("mainnavpanel").style["display"] = "none";
+				document.getElementById("pagetitleheading").style["display"] = "none";
+				document.getElementById("mainpagecontents").style["margin-left"] = "0px";
+				document.getElementById("mainpagecontents").style["padding"] = "0px";
+				
+			}
+		});
+		
+	</script>
+	
+</head>
+
+<body>
+	% if maintenance_mode
+		<div style="background-color: yellow; border: 2px solid red; padding: 2px; font-weight: bold; text-align: center;">
+		The website is currently in maintenance mode.  You may continue to use it, but you may notice disruptions as code is updated.
+		</div>
+	% endif
+
+	<div class="mainnavpanel" id="mainnavpanel">
+	
+		<ul>
+			<li style="text-align: center; margin: 18px 4px">
+				% if site_name
+					<h3 style="font-size: 24px; font-weight:bold; padding: 0px 0px; margin: 4px 16px">{{site_name|e}}</h3>
+					<h4 style="font-size: 14px; font-weight:normal; padding: 0px 0px; margin: 4px 16px">Data Acquisition System</h4>
+				% else
+					<h3 style="font-size: 18px; font-weight:bold; padding: 0px 0px; margin: 4px 16px">Data Acquisition System</h3>
+				% endif
+			</li>
+			% for dn in page_ids
+				% set active_str = ""
+				% if dn == cur_page_id
+					% set active_str = "active "
+				% endif
+				
+				% with pt = page_config[dn]["page_type"]
+				
+					<li><a class="{{active_str}}pagelink_{{pt}}" id="pagelink_{{dn}}" href=			
+
+					% if pt in ["plot", "ls370", "hkmb"]
+						"{{ url_for('pyhkpage.' + pt, cur_page_id=dn) }}"
+					% elif pt in ["fridge", "camera", "about"]
+						"{{ url_for('pyhkpage.' + pt) }}"
+					% elif pt not in ["internal_settings"]
+						"{{ url_for('pyhkpage.generic_page', page_type=pt, cur_page_id=dn) }}"
+					% endif
+				% endwith
+				
+				>{{page_config[dn]["page_title"]}}</a></li>
+				
+			% endfor
+		</ul>
+		
+	</div>
+
+	<div style="margin-left:210px;padding:1px 16px;" id="mainpagecontents">
+		<h2 id="pagetitleheading">{{page_title}}{% block titlesuffix %}{% endblock %}</h2>
+		{% block content %}{% endblock %}
+	</div>
+	
+</body>
+	
+</html>

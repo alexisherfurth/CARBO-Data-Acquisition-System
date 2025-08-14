@@ -1,0 +1,138 @@
+{% extends "livedata-base-page.html" %}
+
+{# Assemble the list of sensors we need updates from for each type. #}
+{# This is kind of awkward to do in Jinja2, maybe there is a cleaner way? #}
+% set update_list = {}	
+% for w in page_config[cur_page_id]['widgets']	
+	% if w['widget_type'] == 'heater_control'
+		% for sl in ['power', 'voltage']	
+			% set tmp = update_list.get(sl, []) + [w['name_v']]
+			% set tmp = update_list.update({sl: tmp})
+		% endfor
+		% set tmp = update_list.get('temperature', []) + [w['name_t']]
+		% set tmp = update_list.update({'temperature': tmp})
+	% elif w['widget_type'] == 'value'
+		% if ('subfolder_label' in w) and ('name' in w)
+			% set tmp = update_list.get(w['subfolder_label'], []) + [w['name']]
+			% set tmp = update_list.update({w['subfolder_label']: tmp})
+		% endif
+	% endif	
+% endfor
+
+{% block header %}
+
+	<style>
+
+		.widget {
+			width: {{page_config[cur_page_id]['widget_width']}}px;
+			height: {{page_config[cur_page_id]['widget_height']}}px;
+			line-height: {{page_config[cur_page_id]['widget_height']}}px;
+			/* border: 1px solid black; */ /* debugging */
+			text-align: center;
+		}
+		
+		.widget-inner {
+			font-size: 16px;
+			line-height: 24px;
+			position: relative;
+			top: 50%;
+			 -webkit-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
+		}
+		
+		.tight-number {
+			-webkit-appearance:     none;
+			-moz-appearance:        none;
+			-ms-appearance:         none;
+			-o-appearance:          none;
+			appearance:             none;
+			padding-left: 3px;
+			padding-right: 3px;
+			margin-left: -3px;
+			margin-right: -3px;
+		}
+		.tight-button {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 12px;
+			-webkit-appearance:     none;
+			-moz-appearance:        none;
+			-ms-appearance:         none;
+			-o-appearance:          none;
+			appearance:             none;
+			padding-left: 2px;
+			padding-right: 2px;
+			margin-left: -2px;
+			margin-right: -2px;
+		}
+		
+	</style>
+	
+	{{ super() }}
+	
+	<script type="text/javascript">
+		
+		unit_lims['voltage'] = [-3,0];
+		unit_lims['power'] = [-6,0];
+	
+		function update_data() 
+		{
+			console.log("Requesting new data");
+			
+			{# Use the auto-generated list of sensors assembled at the top #}
+			% for sublbl in update_list
+				
+				// {{ sublbl }}: {{ update_list[sublbl]|tojson }}
+				$.getJSON("{{ url_for('pyhkpage.get_data_current', subfolder_label=sublbl, value_names=update_list[sublbl]) }}", new_data_func["{{ sublbl }}"]);
+				
+			% endfor
+		}	
+		
+		$( document ).ready(function() 
+		{
+			update_data();
+			var update_timer = setInterval(update_data, 500); // Panels are low data volumes so we can update a little faster
+		});
+		
+	</script>
+		
+{% endblock %}
+
+{% block content %}
+	
+	<div style="position: relative;">
+		
+		<img src="{{url_for('static', filename=page_config[cur_page_id]['background'])}}">
+	
+		% for w in page_config[cur_page_id]['widgets']
+		
+		<div class="widget" style="position: absolute; left: {{w['xpos']}}px; top: {{w['ypos']}}px;">
+			<div class="widget-inner">
+				
+				% if w['widget_type'] == 'heater_control'
+			
+					<b>{{w['label']}}</b><br>
+					<span id="val_temperature_{{ w['name_t']|urlencode }}">-</span><br>
+					<span id="val_voltage_{{ w['name_v']|urlencode }}">-</span>&nbsp;/&nbsp;<span id="val_power_{{ w['name_v']|urlencode }}">-</span><br>
+					
+					<input class="tight-number" type="number"  id="toset_{{ w['name_v']|urlencode }}" style="width:45px; margin-right:5px; margin-top:8px;"></input>
+					<span>
+						<button class="tight-button" onclick="request_set_v('toset_{{ w['name_v']|e }}', '{{ w['name_v']|e }}')"> V </button>
+						<button class="tight-button" onclick="request_set_p('toset_{{ w['name_v']|e }}', '{{ w['name_v']|e }}')"> mW </button>
+						<button class="tight-button" onclick="request_set_v_zero('toset_{{ w['name_v']|e }}', '{{ w['name_v']|e }}')"> 0 </button>
+					</span>
+					
+				% elif w['widget_type'] == 'value'
+				
+					<span id="val_{{ w['subfolder_label'] }}_{{ w['name']|urlencode }}">-</span><br>
+				
+				% endif
+			
+			</div>
+		</div>
+		
+		% endfor
+		
+	</div>	
+
+{% endblock %}

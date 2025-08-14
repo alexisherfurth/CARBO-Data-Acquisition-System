@@ -1,0 +1,116 @@
+{% extends "base-page.html" %}
+
+{% block header %}
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	
+	<style>		
+	</style>
+		
+	<script type="text/javascript">
+		
+		function new_names(data)
+		{
+			$("#valuename").html(data)
+		}
+		
+		function reload_names()
+		{
+			% set date_start_tag = 'startdateloc'
+			% set date_stop_tag = 'stopdateloc'
+			% set subfolder_tag = 'subfolderloc'
+			new_data_url = "{{ url_for('pyhkpage.get_export_names', subfolder_label=subfolder_tag, date_start=date_start_tag, date_stop=date_stop_tag)}}";
+			new_data_url = new_data_url.replace('{{date_start_tag}}', $("#datepicker_from").val());
+			new_data_url = new_data_url.replace('{{date_stop_tag}}', $("#datepicker_to").val());
+			new_data_url = new_data_url.replace('{{subfolder_tag}}', $("#datatype").val());
+			console.log("Loading from names: " + new_data_url);
+			$.get(new_data_url, new_names);	
+		}
+		
+		function get_data()
+		{
+			% set date_start_tag = 'startdateloc'
+			% set date_stop_tag = 'stopdateloc'
+			% set subfolder_tag = 'subfolderloc'
+			% set valname_tag = 'valnameloc'
+			new_data_url = "{{ url_for('pyhkpage.get_export_data', subfolder_label=subfolder_tag, date_start=date_start_tag, date_stop=date_stop_tag, value_name=valname_tag)}}";
+			new_data_url = new_data_url.replace('{{date_start_tag}}', $("#datepicker_from").val());
+			new_data_url = new_data_url.replace('{{date_stop_tag}}', $("#datepicker_to").val());
+			new_data_url = new_data_url.replace('{{subfolder_tag}}', $("#datatype").val());
+			new_data_url = new_data_url.replace('{{valname_tag}}', $("#valuename").val());
+			console.log("Opening exported data: " + new_data_url);
+			window.open(new_data_url);
+		}
+		
+		$( document ).ready(function() 
+		{						
+			$("#datepicker_from").datepicker({
+				dateFormat: "yymmdd",
+				onSelect: function(dateText) {
+					$("#datepicker_to").datepicker( "option", "minDate", dateText);
+					reload_names();
+				}
+			});		
+			$("#datepicker_to").datepicker({
+				dateFormat: "yymmdd",
+				onSelect: function(dateText) {
+					reload_names();
+				}
+			});		
+			$("#datatype").change(function(evt) {
+				reload_names();
+			});
+			
+			reload_names();
+			
+		});
+		
+	</script>
+{% endblock %}
+
+
+
+{% block content %}
+	
+	<p>
+	This page allows you to download a text file containing (time, value) pairs for a given sensor and date range.  The time value is expressed in seconds since the epoch, equivalent to the output of Python's time.time().  Large date ranges may take some time to load.
+	</p>
+
+	<div class="clearfix">
+		<div class="column">
+			<b>Start Date:</b>
+			<div id="datepicker_from"></div>
+		</div>
+		<div class="column">
+			<b>End Date:</b>
+			<div id="datepicker_to"></div>
+		</div>
+
+	</div>
+	
+	<p>
+		
+		<b>Data Type: </b>
+		<select id="datatype">
+			<option value='pressure'>Pressure</option>
+			<option "selected" value='temperature'>Temperature</option>
+			<option value='voltage'>Voltage</option>
+		</select>
+		
+		<br><br>
+		
+		<b>Value Name: </b>
+		<select id="valuename"></select>
+		
+		<br><br>
+		
+		<button onclick="reload_names()">Reload Available Names</button>
+		
+		<br><br>
+		
+		<button onclick="get_data()">Export Data</button>
+	
+	</p>
+	
+
+{% endblock %}

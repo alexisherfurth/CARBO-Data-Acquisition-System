@@ -1,0 +1,394 @@
+[
+    {
+        "id": "meta",
+        "type": "meta",
+        "name": "meta",
+        "version": "HKMBv2",
+        "port": "/dev/ttyACM0",
+        "serial_num": 0
+    },
+    {
+        "id": "T00",
+        "type": "thermometer",
+        "name": "T00",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T01",
+        "type": "thermometer",
+        "name": "T01",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T02",
+        "type": "thermometer",
+        "name": "T02",
+        "excitation": 100.0
+    },
+    {
+        "id": "T03",
+        "type": "thermometer",
+        "name": "T03",
+        "excitation": 100.0
+    },
+    {
+        "id": "T10",
+        "type": "thermometer",
+        "name": "T10",
+        "excitation": 100.0
+    },
+    {
+        "id": "T11",
+        "type": "thermometer",
+        "name": "T11",
+        "excitation": 100.0
+    },
+    {
+        "id": "T12",
+        "type": "thermometer",
+        "name": "T12",
+        "excitation": 100.0
+    },
+    {
+        "id": "T13",
+        "type": "thermometer",
+        "name": "T13",
+        "excitation": 100.0
+    },
+    {
+        "id": "T20",
+        "type": "thermometer",
+        "name": "T20",
+        "excitation": 100.0
+    },
+    {
+        "id": "T21",
+        "type": "thermometer",
+        "name": "T21",
+        "excitation": 100.0
+    },
+    {
+        "id": "T22",
+        "type": "thermometer",
+        "name": "T22",
+        "excitation": 100.0
+    },
+    {
+        "id": "T23",
+        "type": "thermometer",
+        "name": "T23",
+        "excitation": 100.0
+    },
+    {
+        "id": "T30",
+        "type": "thermometer",
+        "name": "T30",
+        "excitation": 100.0
+    },
+    {
+        "id": "T31",
+        "type": "thermometer",
+        "name": "T31",
+        "excitation": 100.0
+    },
+    {
+        "id": "T32",
+        "type": "thermometer",
+        "name": "T32",
+        "excitation": 100.0
+    },
+    {
+        "id": "T33",
+        "type": "thermometer",
+        "name": "T33",
+        "excitation": 100.0
+    },
+    {
+        "id": "T40",
+        "type": "thermometer",
+        "name": "T40",
+        "excitation": 100.0
+    },
+    {
+        "id": "T41",
+        "type": "thermometer",
+        "name": "T41",
+        "excitation": 100.0
+    },
+    {
+        "id": "T42",
+        "type": "thermometer",
+        "name": "T42",
+        "excitation": 100.0
+    },
+    {
+        "id": "T43",
+        "type": "thermometer",
+        "name": "T43",
+        "excitation": 100.0
+    },
+    {
+        "id": "T50",
+        "type": "thermometer",
+        "name": "T50",
+        "excitation": 10000
+    },
+    {
+        "id": "T51",
+        "type": "thermometer",
+        "name": "T51",
+        "excitation": 10000
+    },
+    {
+        "id": "T52",
+        "type": "thermometer",
+        "name": "T52",
+        "excitation": 10000
+    },
+    {
+        "id": "T53",
+        "type": "thermometer",
+        "name": "T53",
+        "excitation": 10000
+    },
+    {
+        "id": "H00",
+        "type": "heater",
+        "name": "Pump 3 Heater",
+        "alias": "D01",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H01",
+        "type": "heater",
+        "name": "Cryostat 02",
+        "alias": "D02",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H02",
+        "type": "heater",
+        "name": "Pump 1 Heater",
+        "alias": "D03",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H03",
+        "type": "heater",
+        "name": "HS 2 Heater",
+        "alias": "D04",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H04",
+        "type": "heater",
+        "name": "HS 1 Heater",
+        "alias": "D05",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H05",
+        "type": "heater",
+        "name": "Pump 2 Heater",
+        "alias": "D06",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H06",
+        "type": "heater",
+        "name": "HS 5 Heater",
+        "alias": "D07",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H07",
+        "type": "heater",
+        "name": "HS 4 Heater",
+        "alias": "D08",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H08",
+        "type": "heater",
+        "name": "HS 3 Heater",
+        "alias": "D09",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H09",
+        "type": "heater",
+        "name": "HS 6 Heater",
+        "alias": "D10",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H10",
+        "type": "heater",
+        "name": "Evap 2 Heater",
+        "alias": "D13",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H11",
+        "type": "heater",
+        "name": "1K Pot Heater",
+        "alias": "D14",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H12",
+        "type": "heater",
+        "name": "Cryostat 11",
+        "alias": "D11",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H13",
+        "type": "heater",
+        "name": "Evap 1 Heater",
+        "alias": "D12",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H14",
+        "type": "heater",
+        "name": "HS 7 Heater",
+        "alias": "D15",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H15",
+        "type": "heater",
+        "name": "Module 4 Heater",
+        "alias": "D16",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H16",
+        "type": "heater",
+        "name": "Cryostat 17",
+        "alias": "D17",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H17",
+        "type": "heater",
+        "name": "1K Strap Heater",
+        "alias": "D18",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H18",
+        "type": "heater",
+        "name": "Fridge UC Heater",
+        "alias": "D19",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H19",
+        "type": "heater",
+        "name": "Module 4 Top Heater",
+        "alias": "D20",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H20",
+        "type": "heater",
+        "name": "Module 5 Heater",
+        "alias": "D21",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H21",
+        "type": "heater",
+        "name": "350mK Strap Heater",
+        "alias": "D22",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H22",
+        "type": "heater",
+        "name": "FPU Heater",
+        "alias": "D23",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H23",
+        "type": "heater",
+        "name": "FPU Heater #2",
+        "alias": "D24",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    }
+]

@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "channel": 0,
+        "name": "4He Pump"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 10,
+        "channel": 1,
+        "name": "3He Pump"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 2,
+        "name": "4He HX"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 3,
+        "name": "3He HX"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 4,
+        "name": "4He Cond"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 2,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 5,
+        "name": "3He Cond"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 9,
+        "channel": 6,
+        "name": "IC"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 9,
+        "channel": 7,
+        "name": "UC"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 8,
+        "name": "NC 370:8"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 9,
+        "name": "NC 370:9"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 10,
+        "name": "FPU #1"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 11,
+        "name": "FPU #2"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 12,
+        "name": "NC 370:12"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 13,
+        "name": "NC 370:13"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 14,
+        "name": "NC 370:14"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": false,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 15,
+        "name": "NC 370:15"
+    }
+]

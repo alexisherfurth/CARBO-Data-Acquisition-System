@@ -1,0 +1,387 @@
+{% extends "livedata-base-page.html" %}
+
+{% block header %}
+
+    {{ super() }}
+    
+    <style>
+        .prettytable td {
+            text-align: center !important;
+        }
+        
+        .safety-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .instrument-group {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        
+        .instrument-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .value-safe {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+        
+        .value-warning {
+            background-color: #fff3cd !important;
+            color: #856404 !important;
+            font-weight: bold;
+        }
+        
+        .value-danger {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+            font-weight: bold;
+        }
+        
+        .value-unknown {
+            background-color: #e2e3e5 !important;
+            color: #6c757d !important;
+        }
+        
+        .safety-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .indicator-safe { background-color: #28a745; }
+        .indicator-warning { background-color: #ffc107; }
+        .indicator-danger { background-color: #dc3545; }
+        .indicator-unknown { background-color: #6c757d; }
+        
+        .status-summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #e9ecef;
+        }
+        
+        .status-counts {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .status-count {
+            text-align: center;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        
+        // Safety ranges for different measurement types
+        var safety_ranges = {
+            'temperature': {
+                'Sensor A': { min: 1, max: 350, unit: 'K' },
+                'Sensor B': { min: 1, max: 350, unit: 'K' },
+                'Sensor C1': { min: 1, max: 350, unit: 'K' },
+                'Sensor D1': { min: 1, max: 350, unit: 'K' },
+                'Sensor C2': { min: 1, max: 350, unit: 'K' },
+                'Sensor D2': { min: 1, max: 350, unit: 'K' },
+                'Sensor C3': { min: 1, max: 350, unit: 'K' },
+                'Sensor D3': { min: 1, max: 350, unit: 'K' },
+                'Sensor C4': { min: 1, max: 350, unit: 'K' },
+                'Sensor D4': { min: 1, max: 350, unit: 'K' },
+                'Sensor C5': { min: 1, max: 350, unit: 'K' },
+                'Sensor D5': { min: 1, max: 350, unit: 'K' },
+                'Cryocooler Temp': { min: 243, max: 283, unit: 'K' },
+                'Temperature': { min: 243, max: 283, unit: 'K' },
+                'Thermocouple 1': { min: 273, max: 373, unit: 'K' },
+                'Thermocouple 2': { min: 273, max: 373, unit: 'K' },
+                'default': { min: 0, max: 400, unit: 'K' }
+            },
+            'pressure': {
+                'Pressure': { min: 1e-6, max: 1000, unit: 'Torr' },
+                'Filtered Pressure': { min: 1e-6, max: 1000, unit: 'Torr' },
+                'default': { min: 0, max: 1000, unit: 'Torr' }
+            },
+            'voltage': {
+                'Cryocooler Voltage': { min: 0, max: 28, unit: 'V' },
+                'Voltage': { min: 0, max: 28, unit: 'V' },
+                'default': { min: -50, max: 50, unit: 'V' }
+            }
+        };
+        
+        // Status counters and tracking
+        var status_counts = {
+            safe: 0,
+            warning: 0,
+            danger: 0,
+            unknown: 0
+        };
+        
+        // Track all expected sensors and their current status
+        var all_sensors = {};
+        var pending_requests = 0;
+        
+        function getSafetyRange(value_name, value_type) {
+            var ranges = safety_ranges[value_type];
+            if (!ranges) return safety_ranges['temperature']['default'];
+            
+            if (ranges[value_name]) {
+                return ranges[value_name];
+            }
+            
+            for (var key in ranges) {
+                if (value_name.toLowerCase().includes(key.toLowerCase())) {
+                    return ranges[key];
+                }
+            }
+            
+            return ranges['default'] || safety_ranges['temperature']['default'];
+        }
+        
+        function getSafetyStatus(value, value_name, value_type) {
+            if (value === null || value === undefined || isNaN(value)) {
+                return 'unknown';
+            }
+            
+            var range = getSafetyRange(value_name, value_type);
+            
+            if (value >= range.min && value <= range.max) {
+                return 'safe';
+            } else if (value >= range.min * 0.8 && value <= range.max * 1.2) {
+                return 'warning';
+            } else {
+                return 'danger';
+            }
+        }
+        
+        function updateStatusCounts() {
+            // Count all sensor statuses
+            status_counts = { safe: 0, warning: 0, danger: 0, unknown: 0 };
+            
+            for (var sensor_key in all_sensors) {
+                var status = all_sensors[sensor_key].status;
+                if (status) {
+                    status_counts[status]++;
+                }
+            }
+            
+            $('#count-safe').text(status_counts.safe);
+            $('#count-warning').text(status_counts.warning);
+            $('#count-danger').text(status_counts.danger);
+            $('#count-unknown').text(status_counts.unknown);
+            
+            var overall_class = 'indicator-safe';
+            if (status_counts.danger > 0) {
+                overall_class = 'indicator-danger';
+            } else if (status_counts.warning > 0) {
+                overall_class = 'indicator-warning';
+            } else if (status_counts.unknown > 0) {
+                overall_class = 'indicator-unknown';
+            }
+            
+            $('#overall-indicator').removeClass().addClass('safety-indicator ' + overall_class);
+        }
+        
+        // Initialize sensor tracking
+        function initializeSensors() {
+            all_sensors = {};
+            {% for instrument in page_config[cur_page_id]['instruments'] %}
+                {% for sensor_name in instrument['names'] %}
+                    all_sensors['{{ instrument['subfolder_label'] }}_{{ sensor_name|urlencode }}'] = {
+                        name: '{{ sensor_name|e }}',
+                        type: '{{ instrument['subfolder_label'] }}',
+                        status: 'unknown',
+                        value: null
+                    };
+                {% endfor %}
+            {% endfor %}
+        }
+        
+        // Create safety dashboard data handlers for each instrument type
+        var new_data_func = {};
+        
+        {% for instrument in page_config[cur_page_id]['instruments'] %}
+        new_data_func['{{ instrument['subfolder_label'] }}_{{ loop.index }}'] = function(data) {
+            console.log("Safety dashboard data received for {{ instrument['subfolder_label'] }}: " + JSON.stringify(data));
+            
+            // Mark all sensors for this instrument as unknown first
+            {% for sensor_name in instrument['names'] %}
+                var sensor_key = '{{ instrument['subfolder_label'] }}_{{ sensor_name|urlencode }}';
+                all_sensors[sensor_key].status = 'unknown';
+                all_sensors[sensor_key].value = null;
+            {% endfor %}
+            
+            // Process received data
+            for (var tname in data) {
+                var val = data[tname][1];
+                var ts = data[tname][0];
+                var sensor_key = '{{ instrument['subfolder_label'] }}_' + encodeURIComponent(tname);
+                
+                var status = getSafetyStatus(val, tname, '{{ instrument['subfolder_label'] }}');
+                
+                if (all_sensors[sensor_key]) {
+                    all_sensors[sensor_key].status = status;
+                    all_sensors[sensor_key].value = val;
+                }
+                
+                var element_id = 'val_{{ instrument['subfolder_label'] }}_' + escape(tname);
+                var $element = $("[id='" + element_id + "']");
+                
+                if ($element.length > 0) {
+                    $element.removeClass('value-safe value-warning value-danger value-unknown');
+                    $element.addClass('value-' + status);
+                    
+                    var formatted_val = val;
+                    if (typeof val === 'number' && !isNaN(val)) {
+                        if ('{{ instrument['subfolder_label'] }}' === 'temperature') {
+                            formatted_val = val.toFixed(3) + ' K';
+                        } else if ('{{ instrument['subfolder_label'] }}' === 'pressure') {
+                            if (val < 1e-3) {
+                                formatted_val = val.toExponential(3) + ' Torr';
+                            } else {
+                                formatted_val = val.toFixed(3) + ' Torr';
+                            }
+                        } else if ('{{ instrument['subfolder_label'] }}' === 'voltage') {
+                            formatted_val = val.toFixed(3) + ' V';
+                        } else {
+                            if (Math.abs(val) > 1000 || (Math.abs(val) < 0.01 && val !== 0)) {
+                                formatted_val = val.toExponential(3);
+                            } else {
+                                formatted_val = val.toFixed(3);
+                            }
+                        }
+                    } else {
+                        formatted_val = '--';
+                    }
+                    
+                    var indicator_class = 'indicator-' + status;
+                    var indicator_html = '<span class="safety-indicator ' + indicator_class + '"></span>';
+                    
+                    $element.html(indicator_html + formatted_val);
+                }
+            }
+            
+            // Decrement pending requests and update counts when all are done
+            pending_requests--;
+            if (pending_requests <= 0) {
+                updateStatusCounts();
+            }
+        };
+        {% endfor %}
+        
+        function update_data() {
+            console.log("Requesting safety dashboard data");
+            
+            // Initialize all sensors as unknown
+            for (var sensor_key in all_sensors) {
+                all_sensors[sensor_key].status = 'unknown';
+                all_sensors[sensor_key].value = null;
+            }
+            
+            // Set pending request counter
+            pending_requests = {{ page_config[cur_page_id]['instruments']|length }};
+            
+            // Request data using the exact PyHK pattern from working templates
+            {% for instrument in page_config[cur_page_id]['instruments'] %}
+            $.getJSON("{{ url_for('pyhkpage.get_data_current', subfolder_label=instrument['subfolder_label'], value_names=instrument['names']) }}")
+                .done(new_data_func['{{ instrument['subfolder_label'] }}_{{ loop.index }}'])
+                .fail(function() {
+                    console.log("Failed to get data for {{ instrument['subfolder_label'] }}");
+                    pending_requests--;
+                    if (pending_requests <= 0) {
+                        updateStatusCounts();
+                    }
+                });
+            {% endfor %}
+        }
+        
+        $(document).ready(function() {
+            initializeSensors();
+            update_data();
+            var update_timer = setInterval(update_data, 2000);
+        });
+        
+    </script>
+        
+{% endblock %}
+
+{% block content %}
+
+    <div class="status-summary">
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <h2 style="margin: 0;">CARBO Status Indicators</h2>
+        </div>
+        
+        <div class="status-counts">
+            <div class="status-count">
+                <span class="safety-indicator indicator-safe"></span>
+                <strong>Safe: <span id="count-safe">0</span></strong>
+            </div>
+            <div class="status-count">
+                <span class="safety-indicator indicator-warning"></span>
+                <strong>Warning: <span id="count-warning">0</span></strong>
+            </div>
+            <div class="status-count">
+                <span class="safety-indicator indicator-danger"></span>
+                <strong>Danger: <span id="count-danger">0</span></strong>
+            </div>
+            <div class="status-count">
+                <span class="safety-indicator indicator-unknown"></span>
+                <strong>Unknown: <span id="count-unknown">0</span></strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="safety-dashboard">
+        
+        {% for instrument in page_config[cur_page_id]['instruments'] %}
+            <div class="instrument-group">
+                <div class="instrument-title">{{ instrument['title'] }}</div>
+                
+                <table class='prettytable' border="1" style="width: 100%;">
+                    <tr>
+                        <th>Sensor</th>
+                        <th>Value</th>
+                    </tr>
+                    
+                    {% for sensor_name in instrument['names'] %}
+                        <tr>
+                            <td>{{ sensor_name|e }}</td>
+                            <td>
+                                <div id="val_{{ instrument['subfolder_label']|e }}_{{ sensor_name|urlencode }}" class="value-unknown">
+                                    <span class="safety-indicator indicator-unknown"></span>--
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    
+                </table>
+            </div>
+        {% endfor %}
+        
+    </div>
+    
+    <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+        <h3>Safe Ranges</h3>
+        <ul>
+            <li><strong>LS224 Temperature Sensors:</strong> ???</li>
+            <li><strong>Thermocouples:</strong> ???</li>
+            <li><strong>Thales Temperature:</strong> ???</li>
+            <li><strong>Pressure:</strong> ???</li>
+            <li><strong>Thales Voltage:</strong> ???</li>
+        </ul>
+        <p><em>Values within ±20% of safe range show as warning (yellow). Values outside this range show as danger (red).</em></p>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,178 @@
+[
+    {
+        "dwell_time": 20,
+        "auto_range": true,
+        "excitation": 5,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 4,
+        "channel": 0,
+        "name": "Fridge: He4 Pump"
+    },
+    {
+        "dwell_time": 20,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 16,
+        "channel": 1,
+        "name": "Fridge: He3 Pump"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 2,
+        "name": "Fridge: He4 HS"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 4,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 14,
+        "channel": 3,
+        "name": "Fridge: He3 HS"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 4,
+        "name": "2K strap (X67049)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 5,
+        "name": "uncal FPU (X59058)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 6,
+        "name": "Fridge: He4 Cond"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 7,
+        "name": "Fridge: He4 Evap"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 8,
+        "name": "Fridge: IC Evap"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 13,
+        "channel": 9,
+        "name": "Fridge: UC Evap"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 10,
+        "name": "uncal FPU (X48754)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 11,
+        "name": "IC strap (X59076)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 12,
+        "name": "uncal FPU (X42117)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 13,
+        "name": "uncal FPU (X59069)"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 14,
+        "name": "cal FPU X30330"
+    },
+    {
+        "dwell_time": 10,
+        "auto_range": true,
+        "excitation": 3,
+        "enabled": true,
+        "mode": 0,
+        "pause_time": 3,
+        "resistance_range": 12,
+        "channel": 15,
+        "name": "uncal FPU (X47819)"
+    }
+]

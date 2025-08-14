@@ -1,0 +1,112 @@
+// Config for CARBO thermal data acquisition
+[
+	{
+		"page_title": "Dashboard",
+		"page_type": "safety_dashboard",
+		"instruments": [
+			{
+				"title": "LS224 Temperature",
+				"subfolder_label": "temperature",
+				"names": ["Sensor A", "Sensor B", "Sensor C1", "Sensor D1", "Sensor C2", "Sensor D2", "Sensor C3", "Sensor D3", "Sensor C4", "Sensor D4", "Sensor C5", "Sensor D5"]
+			},
+			{
+				"title": "MKS Pressure",
+				"subfolder_label": "pressure",
+				"names": ["Pressure", "Filtered Pressure"]
+			},
+			{
+				"title": "Thermocouples",
+				"subfolder_label": "temperature",
+				"names": ["Thermocouple 1", "Thermocouple 2"]
+			},
+			{
+				"title": "Thales Controller Temperature",
+				"subfolder_label": "temperature", 
+				"names": ["Temperature"]
+			},
+			{
+				"title": "Thales Controller Voltage",
+				"subfolder_label": "voltage",
+				"names": ["Voltage"]
+			},
+		]
+	},
+	{
+		"page_title":"LS224 Temperature",
+		"page_type":"plot",
+		"plots":
+		[
+			{
+				"subfolder_label":"temperature",
+				"log_scale":false,
+				"names": ["Sensor A", "Sensor B", "Sensor C1", "Sensor D1", "Sensor C2", "Sensor D2", "Sensor C3", "Sensor D3", "Sensor C4", "Sensor D4", "Sensor C5", "Sensor D5"],
+				"colors": ["blue","red","darkorange","darkorange","darkgoldenrod","darkgoldenrod","green","green","darkblue","darkblue","purple","purple"],
+				"linestyles": ["solid","solid","solid","dashed","solid","dashed","solid","dashed","solid","dashed","solid","dashed"]
+			}
+		]
+	},
+	{
+		"page_title":"MKS Pressure",
+		"page_type":"plot",
+		"plots":
+		[
+			{
+				"log_scale":false,
+				"subfolder_label":"pressure",
+				"units": "Torr",
+				"names": ["Pressure", "Filtered Pressure"],
+				"colors": ["red", "blue"],
+				"linestyles": ["solid", "solid"]
+			}
+		]
+	},
+	{
+		"page_title":"Thermocouples",
+		"page_type":"plot",
+		"plots":
+		[
+			{   
+				"log_scale":false,
+				"subfolder_label":"temperature",
+				"units": "K",
+				"names": ["Thermocouple 1", "Thermocouple 2"],
+				"colors": ["red", "blue"],
+				"linestyles": ["solid", "solid"]
+			}
+		]
+	},
+	{
+		"page_title":"Thales Settings",
+		"page_type":"thales",
+		"use_temperature":true,
+		"use_power":true,
+		"names": ["Test"]
+	},
+	{
+		"page_title":"Thales Temperature",
+		"page_type":"plot",
+		"plots":
+		[
+			{   
+				"log_scale":false,
+				"subfolder_label":"temperature",
+				"units": "K",
+				"names": ["Sensor 1"],
+				"colors": ["red"],
+				"linestyles": ["solid"]
+			}
+		]
+	},
+	{
+		"page_title":"LS224 Settings", 
+		"page_type":"ls224",
+	},
+	{
+		"page_title":"Export Data",
+		"page_type":"export"
+	},
+	{
+		"page_type": "internal_settings",
+		"site_name": "CARBO"
+	}
+]

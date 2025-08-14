@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+
+<body>
+	
+% if maintenance_mode
+
+<h1>Maintenance Mode</h1>
+
+<p>Sorry, the website is currently in maintenance mode.  Please check again later.</p>
+
+% else
+
+<h1>Internal Server Error (500)</h1>
+
+<p>There was an internal server error.  Ensure your pyhkweb config file is correct (run it through a json validator).  Check the output of /var/log/apache2/error.log for more details about the error.
+</p>
+	
+</body>
+
+% endif
+	
+</html>

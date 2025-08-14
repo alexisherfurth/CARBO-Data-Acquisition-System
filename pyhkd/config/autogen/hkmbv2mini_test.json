@@ -1,0 +1,70 @@
+[
+    {
+        "id": "meta",
+        "type": "meta",
+        "name": "meta",
+        "version": "HKMBv2Mini",
+        "port": "/dev/ttyACM0",
+        "serial_num": 0
+    },
+    {
+        "id": "T00",
+        "type": "thermometer",
+        "name": "T00",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T01",
+        "type": "thermometer",
+        "name": "T01",
+        "excitation": 1000.0
+    },
+    {
+        "id": "T02",
+        "type": "thermometer",
+        "name": "T02",
+        "excitation": 100.0
+    },
+    {
+        "id": "T03",
+        "type": "thermometer",
+        "name": "T03",
+        "excitation": 100.0
+    },
+    {
+        "id": "H00",
+        "type": "heater",
+        "name": "H00",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H01",
+        "type": "heater",
+        "name": "H01",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H02",
+        "type": "heater",
+        "name": "H02",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    },
+    {
+        "id": "H03",
+        "type": "heater",
+        "name": "H03",
+        "pid_p": 0,
+        "pid_i": 0,
+        "pid_d": 0,
+        "pid_therm": null
+    }
+]

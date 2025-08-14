@@ -1,0 +1,22 @@
+{% extends "base-page.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+
+</p>	
+
+<h3>Server Information</h3>
+<p>
+<b>Hostname:</b> {{server_hostname}} <br>
+<b>Platform:</b> {{server_platform}} <br>
+<b>CPU Count:</b> {{server_ncpu}} <br>
+<b>Python Version:</b> {{server_pyver}} <br>
+<br>
+<b>CPU Load (1,5,15 min):</b> {{server_load1}}, {{server_load5}}, {{server_load15}} <br>
+<b>RAM Usage:</b> {{server_ramused|round(1)}} / {{server_ramtot|round(1)}} GB<br>
+<br><i>Note that the CPU load and RAM usage shown above includes all running processes.</i>
+</p>	
+
+{% endblock %}

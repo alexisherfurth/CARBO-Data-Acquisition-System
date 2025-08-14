@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import logging
+import time
+
+basepath = os.path.abspath(os.path.join(__file__,'..','..'))
+sys.path.append(os.path.join(basepath, 'pyhkd'))
+sys.path.append(os.path.join(basepath, 'common'))
+
+from pyhkdlib.settings import APP_LOG_FORMAT
+from pyhkdlib.instruments.ptcompressor import PTCompressor
+	
+'''
+The first argument should be the port the PTC is attached to.
+Example:
+	./ptccheck /dev/ttyUSB0
+'''
+
+logging.basicConfig(format=APP_LOG_FORMAT, level=logging.DEBUG)
+
+if len(sys.argv) < 2:
+	port = '/dev/ttyPTC'
+	logging.warning("A port was not provided as an argument, so /dev/ttyPTC is assumed")
+else:	
+	port = str(sys.argv[1])
+assert os.path.exists(port), "The port %s does not exist!" % (port)
+	
+ptc = PTCompressor(port, name_prefix='', wait_time=1, verbose_tx=True, verbose_rx=True, ext_test_mode=True)
+
+try:
+	while (True):
+		ptc.update()
+		time.sleep(0.01)
+except KeyboardInterrupt:
+	pass
+
+logging.debug("Exiting")

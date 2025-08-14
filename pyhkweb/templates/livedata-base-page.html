@@ -1,0 +1,172 @@
+{% extends "base-page.html" %}
+		
+{% block header %}
+		
+	<script type="text/javascript">
+		
+		var si_prefix = {
+			'-24': 'y',
+			'-21': 'z',
+			'-18': 'a',
+			'-15': 'f',
+			'-12': 'p',
+			'-9': 'n',
+			'-6': 'μ',
+			'-3': 'm',
+			'0': '',
+			'3': 'k',
+			'6': 'M',
+			'9': 'G',
+			'12': 'T',
+			'15': 'P',
+			'18': 'E',
+			'21': 'Z',
+			'24': 'Y'
+		};
+		
+		var unit_symbol_default = {{ unit_symbol_default|tojson }};
+		unit_symbol_default['resistance'] = 'Ω'; // Override for web
+		var unit_id_short = {{ unit_symbol_default|tojson }};
+				
+		// Min and max prefix powers to use for different units.
+		// Child pages can overwrite these.  Useful if, for example,
+		// you want to restrict temperatures to only show either K or mK
+		// but never kK.
+		var unit_lims = {
+			'temperature': [-3,0],
+			'angle': [0,0],
+			'percentage': [0,0],
+			'fraction': [0,0],
+			'relhumidity': [0,0],
+			'pressure': [-24,0],
+		};
+		
+		// Units for which a space should not be included between the
+		// number and the unit label
+		var unit_spaceless = ['percentage'];
+				
+		// Generate a lookup table of functions to handle each of the
+		// incomming data types
+		var new_data_func = {};
+		for (subfolder_label in unit_symbol_default)
+		{
+			let lbl = subfolder_label; // Freeze in the value for this scope
+			new_data_func[lbl] = function(d){return new_data_generic(d, lbl)};
+		}
+		
+		// Process incomming data
+		function new_data_generic(data, subfolder_label)
+		{
+			var tar_prefix = 'val_' + subfolder_label + '_';
+			
+			units = unit_symbol_default[subfolder_label];
+			
+			console.log("New data received (" + subfolder_label + ")");
+			
+			for (tname in data)
+			{
+				if (data[tname][1] == null || data[tname][1] === '')
+				{
+					val = "None";
+				}
+				else if (units == null || units === '')
+				{
+					// No units or prefixes, use default string representation
+					// which should handle integers and floating points
+					// fairly gracefully
+					val = data[tname][1];
+				}
+				else
+				{
+					val = data[tname][1];
+										
+					var lims = unit_lims[subfolder_label];
+					if (lims == undefined)
+						lims = [-12, 12];
+										
+					sign = '';
+					if (val < 0)
+						sign = '-';
+					val = Math.abs(val);
+					
+					// Find the closest SI prefix
+					power = Math.round((Math.log10(val)-1.0) / 3) * 3;
+					if (power < lims[0])
+						power = lims[0];
+					else if (power > lims[1])
+						power = lims[1];	
+					if (power in si_prefix)
+					{
+						prefix = si_prefix[power];
+					}
+					else
+					{
+						power = 0;
+						prefix = '';
+					}
+					
+					val *= Math.pow(10, -power);
+					
+					// Try to show 4 sig figs
+					if (val >= 99.995)
+						// 99.995 is the first number to round to 
+						// 100.00 if it was shown with two 
+						// decimal places, so show it as 100.0						
+						val = val.toFixed(1);
+					else if (val >= 9.9995)
+						val = val.toFixed(2);
+					else
+						// Don't show extreme numbers of decimal places,
+						// we already have the SI prefixes so the number
+						// is very small
+						val = val.toFixed(3);
+						
+					// Most of the time we want a space after the number
+					if (!unit_spaceless.includes(subfolder_label) && (units.length > 0))
+					{
+						prefix = '&nbsp;' + prefix;
+					}
+					
+					val = sign + val + prefix + units;
+				}
+				
+				$("[id='" + tar_prefix + escape(tname) + "']").html(val);
+			}
+			
+		}
+			
+		function request_set(input_id, target_name, command, scale)
+		{	
+			var val = $("[id='" + escape(input_id) + "']").val();
+			if (scale != null)
+				val = parseFloat(val) / scale;
+			request_set_val(target_name, command, val);
+		}
+		
+		function request_set_val(target_name, command, val)
+		{	
+			console.log("Requesting " + command + ", " + target_name + ", " + val);
+			$.post("{{ url_for('pyhkpage.request_pyhkd_set') }}", {"command": command, "name": target_name, "value": val}, function(result) {console.log("Server Result: " + result);});
+		}
+				
+		function request_set_t(input_id, target_name) {request_set(input_id, target_name, 'tset', 1);}
+		function request_set_v(input_id, target_name) {request_set(input_id, target_name, 'vset', 1);}
+		function request_set_p(input_id, target_name) {request_set(input_id, target_name, 'pset', 1000);}
+		function request_set_t(input_id, target_name) {request_set(input_id, target_name, 'tset', 1);}
+		function request_set_i(input_id, target_name) {request_set(input_id, target_name, 'iset', 1);}
+		function request_set_ir(input_id, target_name) {request_set(input_id, target_name, 'irset', 1);}
+		function request_set_s(input_id, target_name) {request_set(input_id, target_name, 'sset', null);}
+		function request_set_per(input_id, target_name) {request_set(input_id, target_name, 'perset', 1);}
+		
+		function request_set_val_s(target_name, val) {request_set_val(target_name, 'sset', val);}
+		
+		function request_set_v_zero(input_id, target_name) 
+		{
+			$("[id='" + escape(input_id) + "']").val(0);
+			request_set_v(input_id, target_name);
+		}
+                                    
+				
+	</script>
+{% endblock %}
+
