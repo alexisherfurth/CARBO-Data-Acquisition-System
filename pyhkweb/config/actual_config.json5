@@ -22,12 +22,7 @@
 			{
 				"title": "Thales Controller Temperature",
 				"subfolder_label": "temperature", 
-				"names": ["Temperature"]
-			},
-			{
-				"title": "Thales Controller Voltage",
-				"subfolder_label": "voltage",
-				"names": ["Voltage"]
+				"names": ["Sensor 1"]
 			},
 		]
 	},
@@ -81,21 +76,6 @@
 		"use_temperature":true,
 		"use_power":true,
 		"names": ["Test"]
-	},
-	{
-		"page_title":"Thales Temperature",
-		"page_type":"plot",
-		"plots":
-		[
-			{   
-				"log_scale":false,
-				"subfolder_label":"temperature",
-				"units": "K",
-				"names": ["Sensor 1"],
-				"colors": ["red"],
-				"linestyles": ["solid"]
-			}
-		]
 	},
 	{
 		"page_title":"LS224 Settings", 

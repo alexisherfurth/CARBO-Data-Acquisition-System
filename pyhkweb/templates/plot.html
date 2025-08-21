@@ -668,10 +668,47 @@
 			$("#dtslidefine").val(0);
 
 			$("#numdaysprior").change(function(evt) {
-				sessionStorage.plot_num_days = $("#numdaysprior").val();
-				get_new_plot_data();
-			});
-			
+    sessionStorage.plot_num_days = $("#numdaysprior").val();
+    // Clear hours selection when days is changed
+    $("#numhoursprior").val("");
+    get_new_plot_data();
+});
+
+// Hours selector change handler
+$("#numhoursprior").change(function(evt) {
+    var hours = $("#numhoursprior").val();
+    if (hours && hours !== "") {
+        // Convert hours to fractional days, but round to reasonable precision
+        var fractionalDays = parseFloat(hours) / 24;
+        // Round to 6 decimal places to avoid long URLs
+        fractionalDays = Math.round(fractionalDays * 1000000) / 1000000;
+        sessionStorage.plot_num_days = fractionalDays.toString();
+        sessionStorage.plot_target_date = 'today';
+        // Clear days selection when hours is changed
+        $("#numdaysprior").val("");
+        live_plot_enabled(true);
+        get_new_plot_data();
+    }
+});
+
+// Also improve the initialization logic:
+$("#numdaysprior").val(sessionStorage.plot_num_days);
+
+// Initialize selectors properly
+var currentDays = parseFloat(sessionStorage.plot_num_days || "2");
+if (currentDays < 1) {
+    // This looks like it was set by hours selector
+    var hours = Math.round(currentDays * 24);
+    $("#numhoursprior").val(hours);
+    $("#numdaysprior").val("");
+} else {
+    // Set to days mode
+    $("#numhoursprior").val("");
+    // Only set days selector if it's a whole number
+    if (currentDays == Math.floor(currentDays)) {
+        $("#numdaysprior").val(currentDays);
+    }
+}
 			% for plot_i in range(num_plots)
 			
 				// Keep track of mouse position on the plots
@@ -769,13 +806,22 @@
 		<div class="column" style="width:250px; height:{{ysize_total}}px; padding-left:30px;">
 			% if not page_config[cur_page_id].get('fast_sampling', false)
 				<div id="datepicker"></div>
-				<p style="font-size:12px"><button onclick="reset_date_defaults()">Today</button>  | Show 
+				<p style="font-size:12px"><button onclick="reset_date_defaults()">Today</button> | Show
 				<select id="numdaysprior">
 					% for i in range(1,6)
 					<option value={{i}}>{{i}}</option>
 					% endfor 
 				</select>
 				day(s)</p>
+
+				<!-- Hours section -->
+				<p style="font-size:12px">Or show last
+				<select id="numhoursprior">
+					% for i in [1, 2, 3, 6, 12, 24, 48]
+					<option value={{i}}>{{i}}</option>
+					% endfor
+				</select>
+				hour(s)</p>
 				<p style="font-size:12px">			
 				<label><input id="chkplotlive" type='checkbox' onclick='changeLiveOverplot(this);'>Plot Archive Over Live</label>
 				<div id="comparecontrols" style="display: none; font-size:12px;">

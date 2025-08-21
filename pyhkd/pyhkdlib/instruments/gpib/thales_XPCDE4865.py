@@ -29,7 +29,7 @@ class ThalesXPCDE4865(Instrument):
     NUM_SENSORS = 2
     BOX_TYPE = 'THALES_XPCDE4865'
 
-    def __init__(self, port='/dev/ttyUSB1', baudrate=9600, timeout=2.0, wait_time=1, channels=None, **kwargs):
+    def __init__(self, port='/dev/ttyUSB0', baudrate=9600, timeout=2.0, wait_time=1, channels=None, **kwargs):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
@@ -38,8 +38,8 @@ class ThalesXPCDE4865(Instrument):
         # Ensure channels is always a list
         if channels is None:
             channels = [
-                {"name": "Controller Temp", "type": "temperature"},
-                {"name": "Controller Voltage", "type": "voltage"},
+                {"name": "Sensor 1", "type": "temperature"},
+                {"name": "Voltage", "type": "voltage"},
             ]
         elif not isinstance(channels, list):
             raise ValueError("channels must be a list or None")
@@ -88,26 +88,70 @@ class ThalesXPCDE4865(Instrument):
 
     def read_frequency(self):
         """Read current frequency (Hz)."""
-        self.write_cmd("RFR")
-        resp = self.read_line()
-        try:
-            return float(resp)
-        except ValueError:
+        if not self.serial:
             return np.nan
+        
+        # Clear any pending data first
+        self.flush()
+        time.sleep(0.1)
+        
+        # Send the read frequency command
+        self.write_cmd("RFR")
+        
+        # Try multiple times to read a valid response
+        for attempt in range(5):
+            resp = self.read_line()
+            if resp:  # If we got a response
+                try:
+                    freq = float(resp.strip())
+                    if 0 <= freq <= 200:  # Sanity check for reasonable frequency
+                        return freq
+                except ValueError:
+                    pass
+            time.sleep(0.05)  # Small delay between attempts
+        
+        logging.warning("Failed to read frequency after multiple attempts")
+        return np.nanSet
 
-    def set_temperature(self, kelvin):
-        """Set temperature setpoint (K)."""
+    def set_temperature(self, kelvin, max_voltage=None, kp=1.0, ki=0.1):
+        """Set temperature setpoint (K) with optional voltage limit and PID gains."""
         mV = self.kelvin_to_voltage(kelvin)
+        
+        # Set PID gains first
+        try:
+            self.set_pid_gains(kp, ki)
+        except ValueError as e:
+            logging.warning(f"Invalid PID gains, using defaults: {e}")
+            kp, ki = 1.0, 0.1
+            self.set_pid_gains(kp, ki)
+        
+        # If max_voltage is specified, check if the required voltage exceeds it
+        if max_voltage is not None:
+            required_voltage = mV / 1000.0  # Convert mV to V for comparison
+            if required_voltage > max_voltage:
+                # Cap the voltage and warns
+                mV = max_voltage * 1000.0
+                actual_temp = self.voltage_to_kelvin(mV)
+                logging.warning(f"Temperature {kelvin}K requires {required_voltage:.2f}V, "
+                              f"capped at {max_voltage}V (actual temp: {actual_temp:.2f}K)")
+        
+        # Set the temperature setpoint
         self.write_cmd(f"SSP {mV:.2f}")
         self.setpoint_K = kelvin
+        
+        logging.info(f"Temperature setpoint set to {kelvin}K with PID gains: Kp={kp}, Ki={ki}")
+        return mV / 1000.0  # Return actual voltage set
 
     def set_voltage(self, voltage):
         """Set output voltage (Vac)."""
+        original_voltage = voltage
         if voltage > 28:
             voltage = 28
+            logging.warning(f"Voltage {original_voltage}V exceeds maximum limit, capped at 28V")
         self.write_cmd("SSK 706")
         self.write_cmd(f"SOV {voltage:.2f}")
         self.setpoint_V = voltage
+        return voltage  # Return the actual voltage that was set
 
     def read_temperature(self):
         """Read temperature in Kelvin."""
@@ -170,6 +214,109 @@ class ThalesXPCDE4865(Instrument):
         v_sorted = v[idx]
         k_sorted = k[idx]
         return float(np.interp(K, k_sorted, v_sorted))
+
+    def read(self):
+        """Read data from all channels."""
+        if not self.serial:
+            return {}
+        
+        try:
+            # Send RVS command once and get the response
+            self.write_cmd("RVS")
+            time.sleep(0.1)  # Give device time to respond
+            
+            # Try to read the response
+            for attempt in range(5):
+                raw = self.read_line()
+                if raw:
+                    try:
+                        volt_mv = float(raw.strip())
+                        temp_k = self.voltage_to_kelvin(volt_mv)
+                        
+                        # Add logging for debugging
+                        logging.debug(f"Thales raw voltage: {volt_mv} mV, converted temp: {temp_k} K")
+                        
+                        break
+                    except ValueError:
+                        time.sleep(0.05)
+                        continue
+            else:
+                logging.warning("Failed to read valid data from Thales")
+                return {}
+            
+            # Return data for all configured channels
+            data = {}
+            for channel in self.channels:
+                if channel['type'] == 'temperature':
+                    data[channel['name']] = temp_k
+                elif channel['type'] == 'voltage':
+                    # Convert mV to V for voltage type
+                    data[channel['name']] = volt_mv / 1000.0
+            
+            return data
+            
+        except Exception as e:
+            logging.error(f"Error reading Thales data: {e}")
+            return {}
+
+    def update_periodic(self):
+        """Update all sensor values - called by the data logging system"""
+        data = self.read()
+        for channel_id, channel_config in self._channels.items():
+            for sensor_type in channel_config['types_processed']:
+                sensor = self.get_sensor(channel_id, sensor_type, none_on_fail=True)
+                if sensor is not None:
+                    channel_name = channel_config['name']
+                    if channel_name in data:
+                        sensor.value = data[channel_name]
+
+    def set_pid_gains(self, kp, ki):
+        """Set PID gains. Valid ranges: P: 1.0-8.0, I: 0.1-0.85"""
+        if not (1.0 <= kp <= 8.0):
+            raise ValueError("Proportional gain must be between 1.0 and 8.0")
+        if not (0.1 <= ki <= 0.85):
+            raise ValueError("Integration gain must be between 0.1 and 0.85")
+        
+        self.write_cmd(f"SPG {kp:.2f}")
+        time.sleep(0.1)
+        self.write_cmd(f"SIG {ki:.2f}")
+        
+        logging.info(f"PID gains set: Kp={kp:.2f}, Ki={ki:.2f}")
+
+    def read_pid_gains(self):
+        """Read current PID gains"""
+        try:
+            # Read proportional gain
+            self.write_cmd("RPG")
+            time.sleep(0.1)
+            kp_raw = self.read_line()
+            kp = float(kp_raw) if kp_raw else np.nan
+            
+            # Read integration gain
+            self.write_cmd("RIG")
+            time.sleep(0.1)
+            ki_raw = self.read_line()
+            ki = float(ki_raw) if ki_raw else np.nan
+            
+            return kp, ki
+        except Exception as e:
+            logging.error(f"Failed to read PID gains: {e}")
+            return np.nan, np.nan
+
+    def set_ready_window(self, window_mv):
+        """Set ready window in mV"""
+        self.write_cmd(f"SRW {window_mv:.2f}")
+        logging.info(f"Ready window set to {window_mv:.2f} mV")
+
+    def read_ready_window(self):
+        """Read ready window in mV"""
+        try:
+            self.write_cmd("RRW")
+            time.sleep(0.1)
+            raw = self.read_line()
+            return float(raw) if raw else np.nan
+        except:
+            return np.nan
 
 # Example script usage
 if __name__ == "__main__":

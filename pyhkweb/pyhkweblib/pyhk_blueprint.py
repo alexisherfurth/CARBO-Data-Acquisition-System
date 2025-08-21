@@ -497,8 +497,7 @@ def get_live_config(fname):
 											
 
 # Thales control routes
-# Singleton for demo; use a better manager for real deployment!
-thales = ThalesXPCDE4865(port='/dev/ttyUSB1')
+thales = ThalesXPCDE4865(port='/dev/ttyUSB0')
 
 @pyhkpage.route("/control/thales/connect", methods=["POST"])
 def thales_connect():
@@ -538,21 +537,79 @@ def thales_update_mode():
     mode = flask.request.json.get("mode")
     temp = flask.request.json.get("temp")
     volt = flask.request.json.get("volt")
+    max_volt = flask.request.json.get("maxVolt")
+    
+    logging.info(f"Update mode request: mode={mode}, temp={temp}, volt={volt}, maxVolt={max_volt}")
+    
     try:
         if mode == "temp":
-            thales.set_temperature(float(temp))
-            return f"Set temperature to {temp} K"
+            max_voltage = None
+            if max_volt and float(max_volt) > 0:
+                max_voltage = float(max_volt)
+                if max_voltage > 28:
+                    max_voltage = 28
+                    logging.warning(f"Max voltage {max_volt}V exceeds limit, capped at 28V")
+            
+            # Call the temperature control method
+            actual_voltage = thales.set_temperature(float(temp), max_voltage)
+            
+            response = f"Started automatic temperature control: target={temp}K"
+            if max_voltage:
+                response += f", max voltage={max_voltage}V"
+            response += f", actual voltage set: {actual_voltage:.2f}V"
+            return response
         else:
-            thales.set_voltage(float(volt))
-            return f"Set voltage to {volt} V"
+            # Use manual voltage mode
+            voltage_to_set = float(volt)
+            if voltage_to_set > 28:
+                voltage_to_set = 28
+                logging.warning(f"Voltage {volt}V exceeds limit, capped at 28V")
+            
+            actual_voltage = thales.set_voltage(voltage_to_set)
+            return f"Set manual voltage to {actual_voltage:.2f}V"
     except Exception as e:
+        logging.error(f"Update mode failed: {e}")
         return f"Update mode failed: {e}"
+
+@pyhkpage.route("/control/thales/stop_temperature_control", methods=["POST"])
+def thales_stop_temperature_control():
+    """Stop automatic temperature control"""
+    try:
+        thales.stop_automatic_temperature_control()
+        return "Automatic temperature control stopped"
+    except Exception as e:
+        return f"Stop temperature control failed: {e}"
+
+@pyhkpage.route("/control/thales/temperature_control_status", methods=["POST"])
+def thales_temperature_control_status():
+    """Get temperature control status"""
+    try:
+        status = thales.get_temperature_control_status()
+        return json.dumps(status)
+    except Exception as e:
+        return f"Get status failed: {e}"
+
+@pyhkpage.route("/control/thales/read_temperature", methods=["POST"])
+def thales_read_temperature():
+    try:
+        temp = thales.read_temperature()
+        return str(temp)
+    except Exception as e:
+        return f"Read temperature failed: {e}"
+
+@pyhkpage.route("/control/thales/read_voltage", methods=["POST"])
+def thales_read_voltage():
+    try:
+        voltage = thales.read_voltage()
+        return str(voltage)
+    except Exception as e:
+        return f"Read voltage failed: {e}"
 
 @pyhkpage.route("/control/thales/start", methods=["POST"])
 def thales_start():
     try:
         thales.enable(True)
-        return "Cryocooler ON"
+        return "Cryocooler started"
     except Exception as e:
         return f"Start failed: {e}"
 
@@ -560,23 +617,23 @@ def thales_start():
 def thales_stop():
     try:
         thales.enable(False)
-        return "Cryocooler OFF"
+        return "Cryocooler stopped"
     except Exception as e:
         return f"Stop failed: {e}"
 
 @pyhkpage.route("/control/thales/apply_slow_start", methods=["POST"])
 def thales_apply_slow_start():
-    data = flask.request.json
     try:
+        params = flask.request.json
         thales.apply_slow_start(
-            ssf=float(data.get("ssf", 100)),
-            ss1=float(data.get("ss1", 5)),
-            ss2=float(data.get("ss2", 60)),
-            ss3=float(data.get("ss3", 81)),
-            sv1=float(data.get("sv1", 920)),
-            sv2=float(data.get("sv2", 1040)),
+            ssf=float(params.get('ssf', 100)),
+            ss1=float(params.get('ss1', 5)),
+            ss2=float(params.get('ss2', 60)),
+            ss3=float(params.get('ss3', 81)),
+            sv1=float(params.get('sv1', 920)),
+            sv2=float(params.get('sv2', 1040))
         )
-        return "Slow start applied"
+        return "Slow start parameters applied"
     except Exception as e:
         return f"Apply slow start failed: {e}"
 
@@ -584,7 +641,33 @@ def thales_apply_slow_start():
 def thales_end_slow_start():
     try:
         thales.end_slow_start()
-        return "End slow start sent"
+        return "Slow start sequence ended"
     except Exception as e:
         return f"End slow start failed: {e}"
 
+@pyhkpage.route("/control/thales/set_pid_gains", methods=["POST"])
+def thales_set_pid_gains():
+    try:
+        kp = float(flask.request.json.get("kp", 1.0))
+        ki = float(flask.request.json.get("ki", 0.1))
+        thales.set_pid_gains(kp, ki)
+        return f"PID gains set: Kp={kp:.2f}, Ki={ki:.2f}"
+    except Exception as e:
+        return f"Set PID gains failed: {e}"
+
+@pyhkpage.route("/control/thales/read_pid_gains", methods=["POST"])
+def thales_read_pid_gains():
+    try:
+        kp, ki = thales.read_pid_gains()
+        return json.dumps({"kp": kp, "ki": ki})
+    except Exception as e:
+        return f"Read PID gains failed: {e}"
+
+@pyhkpage.route("/control/thales/set_ready_window", methods=["POST"])
+def thales_set_ready_window():
+    try:
+        window = float(flask.request.json.get("window", 10.0))
+        thales.set_ready_window(window)
+        return f"Ready window set to {window:.2f} mV"
+    except Exception as e:
+        return f"Set ready window failed: {e}"

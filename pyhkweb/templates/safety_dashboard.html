@@ -113,11 +113,6 @@
                 'Filtered Pressure': { min: 1e-6, max: 1000, unit: 'Torr' },
                 'default': { min: 0, max: 1000, unit: 'Torr' }
             },
-            'voltage': {
-                'Cryocooler Voltage': { min: 0, max: 28, unit: 'V' },
-                'Voltage': { min: 0, max: 28, unit: 'V' },
-                'default': { min: -50, max: 50, unit: 'V' }
-            }
         };
         
         // Status counters and tracking
@@ -252,8 +247,6 @@
                             } else {
                                 formatted_val = val.toFixed(3) + ' Torr';
                             }
-                        } else if ('{{ instrument['subfolder_label'] }}' === 'voltage') {
-                            formatted_val = val.toFixed(3) + ' V';
                         } else {
                             if (Math.abs(val) > 1000 || (Math.abs(val) < 0.01 && val !== 0)) {
                                 formatted_val = val.toExponential(3);
@@ -379,7 +372,6 @@
             <li><strong>Thermocouples:</strong> ???</li>
             <li><strong>Thales Temperature:</strong> ???</li>
             <li><strong>Pressure:</strong> ???</li>
-            <li><strong>Thales Voltage:</strong> ???</li>
         </ul>
         <p><em>Values within ±20% of safe range show as warning (yellow). Values outside this range show as danger (red).</em></p>
     </div>
